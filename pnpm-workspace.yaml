@@ -3,6 +3,7 @@ packages:
   - ui
   - packages/*
   - extensions/*
+  - "!extensions/_matrix.disabled"
 
 onlyBuiltDependencies:
   - '@whiskeysockets/baileys'
