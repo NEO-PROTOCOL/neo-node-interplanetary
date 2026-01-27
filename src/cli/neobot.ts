@@ -75,6 +75,51 @@ async function main() {
       process.exit(0);
     }
 
+    if (skill === "social-test") {
+      const { assertSocialEnabled, requiresConfirmation } =
+        await import("../config/runtime-config.js");
+      const { appendLedgerEvent, createEventId } = await import("../infra/ledger/ledger.js");
+      const readline = await import("readline-sync");
+
+      try {
+        // 1. Policy Gate: Check if enabled
+        assertSocialEnabled("x");
+
+        // 2. Policy Gate: Check confirmation
+        if (requiresConfirmation("social")) {
+          if (!rest.includes("--yes")) {
+            // In a real CLI we might prompt. For this test automation we error if flag missing.
+            // We can simulate the user interaction if running interactively, but here:
+            console.error("⚠️  Confirmation required by policy. Use --yes to proceed.");
+            process.exit(1);
+          }
+        }
+
+        // 3. Execution (Simulated)
+        const eventId = createEventId("evt");
+        console.log("🚀 Executing Social Test Action on X...");
+
+        appendLedgerEvent({
+          id: eventId,
+          ts: new Date().toISOString(),
+          actor: "user",
+          channel: "cli",
+          skill: "social-test",
+          intent: "post to x",
+          status: "success",
+          duration_ms: 10,
+          risk: "high",
+        });
+
+        console.log(`✅ Success. [ledger event] ${eventId}`);
+        process.exit(0);
+      } catch (err: any) {
+        console.error(`❌ ${err.message}`);
+        // Log blocked attempt?
+        process.exit(1);
+      }
+    }
+
     console.error(`Unknown skill: ${skill}`);
     console.error(`(MVP only supports: ops-status)`);
     process.exit(1);
