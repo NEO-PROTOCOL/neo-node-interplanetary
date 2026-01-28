@@ -1,4 +1,4 @@
-import { TelegramChannel } from "../../../src/channels/plugins/outbound/telegram.js";
+import { sendMessageTelegram } from "../../../src/telegram/send.js";
 import { loadConfig } from "../../../src/config/config.js";
 
 async function main() {
@@ -14,19 +14,11 @@ async function main() {
     const to = args[toIndex + 1];
     const message = args[msgIndex + 1];
 
-    const cfg = loadConfig();
-    const channel = new TelegramChannel({ config: cfg });
-
     console.log(`📡 Enviando mensagem para ${to}...`);
 
     try {
-        // Note: We might need to resolve @username to a chat ID if the channel doesn't support it directly.
-        // However, looking at the code, it probably needs a chat ID or uses the telegram API.
-        await channel.send({
-            to,
-            payloads: [{ text: message }]
-        });
-        console.log("✅ Mensagem enviada!");
+        const result = await sendMessageTelegram(to, message);
+        console.log(`✅ Mensagem enviada! ID: ${result.messageId}`);
         process.exit(0);
     } catch (err) {
         console.error(`❌ Falha ao enviar: ${err}`);
