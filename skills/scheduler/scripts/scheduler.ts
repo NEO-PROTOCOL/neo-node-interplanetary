@@ -4,6 +4,9 @@ import process from "node:process";
 import crypto from "node:crypto";
 import { loadCronStore, saveCronStore, resolveCronStorePath } from "../../../src/cron/store.js";
 import type { CronJob, CronPayload } from "../../../src/cron/types.js";
+import { loadDotEnv } from "../../../src/infra/dotenv.js";
+
+loadDotEnv();
 
 async function main() {
     const args = process.argv.slice(2);

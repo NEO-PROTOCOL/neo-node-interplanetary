@@ -116,28 +116,74 @@ async function main() {
   }
 
   if (cmd === "cron") {
-    const { jobs, startScheduler } = await import("../infra/scheduler/scheduler.js");
+    const { jobs: hardcodedJobs, startScheduler: startHardcoded } =
+      await import("../infra/scheduler/scheduler.js");
+    const { loadCronStore, resolveCronStorePath } = await import("../cron/store.js");
+    const { loadConfig } = await import("../config/config.js");
+    const { createDefaultDeps } = await import("./deps.js");
+    const { buildGatewayCronService } = await import("../gateway/server-cron.js");
+
+    const cfg = loadConfig();
+    const deps = createDefaultDeps();
+    const gatewayCron = buildGatewayCronService({
+      cfg,
+      deps,
+      broadcast: () => {},
+    });
 
     if (subcmd === "list") {
-      console.log("📋 Tarefas Agendadas:");
-      jobs.forEach((j) => console.log(`- ${j.name}: ${j.schedule}`));
+      console.log("📋 Tarefas Hardcoded (infra):");
+      hardcodedJobs.forEach((j) => console.log(`- ${j.name}: ${j.schedule}`));
+
+      console.log("\n📋 Tarefas Dinâmicas (jobs.json):");
+      const store = await loadCronStore(resolveCronStorePath(cfg.cron?.store));
+      if (store.jobs.length === 0) {
+        console.log("(Nenhuma tarefa agendada)");
+      } else {
+        store.jobs.forEach((j) => {
+          const status = j.enabled ? "✅" : "❌";
+          const schedule =
+            j.schedule.kind === "at"
+              ? new Date(j.schedule.atMs).toLocaleString()
+              : JSON.stringify(j.schedule);
+          console.log(`${status} [${j.id.slice(0, 8)}] ${j.name}: ${schedule}`);
+        });
+      }
       process.exit(0);
     }
 
     if (subcmd === "run") {
-      const jobName = rest[0];
-      const job = jobs.find((j) => j.name === jobName);
-      if (!job) {
-        console.error(`❌ Tarefa não encontrada: ${jobName}`);
+      const target = rest[0];
+      if (!target) {
+        console.error("❌ Use: neobot cron run <nome_ou_id>");
         process.exit(1);
       }
-      await job.run();
+
+      // Try hardcoded first
+      const hardcoded = hardcodedJobs.find((j) => j.name === target);
+      if (hardcoded) {
+        console.log(`📡 Executando tarefa hardcoded: ${hardcoded.name}...`);
+        await hardcoded.run();
+        process.exit(0);
+      }
+
+      // Try dynamic
+      console.log(`📡 Procurando tarefa dinâmica: ${target}...`);
+      try {
+        const result = await gatewayCron.cron.run(target, "force");
+        console.log(`✅ Resultado: ${JSON.stringify(result)}`);
+      } catch (err) {
+        console.error(`❌ Erro: ${err instanceof Error ? err.message : String(err)}`);
+      }
       process.exit(0);
     }
 
     if (subcmd === "start") {
-      startScheduler();
-      // Keep process alive
+      console.log("🛠️ Iniciando todos os agendadores...");
+      startHardcoded();
+      await gatewayCron.cron.start();
+      console.log("🚀 Todos os sistemas de agendamento ativos.");
+      // Keep alive
       process.stdin.resume();
       return;
     }

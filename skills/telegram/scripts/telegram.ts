@@ -1,4 +1,7 @@
 import { sendMessageTelegram } from "../../../src/telegram/send.js";
+import { loadDotEnv } from "../../../src/infra/dotenv.js";
+
+loadDotEnv();
 
 async function main() {
     const args = process.argv.slice(2);
