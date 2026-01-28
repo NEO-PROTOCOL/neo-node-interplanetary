@@ -1,3 +1,4 @@
+import "dotenv/config";
 import { runShellSkill } from "../infra/runner/run-shell-skill.js";
 import { getLedgerFilePath } from "../infra/ledger/ledger.js";
 import fs from "node:fs";
