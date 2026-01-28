@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NΞØ BOT Dashboard</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="logo">
+                <span class="logo-icon">🛰️</span>
+                <h1>NΞØ BOT</h1>
+            </div>
+            <div class="status-badge">
+                <span class="status-dot"></span>
+                <span>Sistema Ativo</span>
+            </div>
+        </header>
+
+        <!-- Bento Grid -->
+        <div class="bento-grid">
+            <!-- Quick Actions -->
+            <div class="bento-card card-primary">
+                <div class="card-header">
+                    <h2>⚡ Ações Rápidas</h2>
+                </div>
+                <div class="quick-actions">
+                    <button class="action-btn" onclick="openReminderModal()">
+                        <span class="btn-icon">🔔</span>
+                        <span>Novo Lembrete</span>
+                    </button>
+                    <button class="action-btn" onclick="openMessageModal()">
+                        <span class="btn-icon">💬</span>
+                        <span>Enviar Mensagem</span>
+                    </button>
+                    <button class="action-btn" onclick="refreshStatus()">
+                        <span class="btn-icon">🔄</span>
+                        <span>Atualizar Status</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Reminders List -->
+            <div class="bento-card card-tall">
+                <div class="card-header">
+                    <h2>📅 Lembretes Agendados</h2>
+                    <button class="icon-btn" onclick="loadReminders()">↻</button>
+                </div>
+                <div id="reminders-list" class="list-container">
+                    <div class="loading">Carregando...</div>
+                </div>
+            </div>
+
+            <!-- System Health -->
+            <div class="bento-card card-accent">
+                <div class="card-header">
+                    <h2>💚 Saúde do Sistema</h2>
+                </div>
+                <div class="health-metrics">
+                    <div class="metric">
+                        <span class="metric-label">Telegram</span>
+                        <span class="metric-value" id="telegram-status">✅ Conectado</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Scheduler</span>
+                        <span class="metric-value" id="scheduler-status">✅ Ativo</span>
+                    </div>
+                    <div class="metric">
+                        <span class="metric-label">Lembretes</span>
+                        <span class="metric-value" id="reminders-count">0 agendados</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Messages -->
+            <div class="bento-card card-wide">
+                <div class="card-header">
+                    <h2>📨 Mensagens Recentes</h2>
+                    <button class="icon-btn" onclick="loadMessages()">↻</button>
+                </div>
+                <div id="messages-list" class="messages-container">
+                    <div class="empty-state">Nenhuma mensagem ainda</div>
+                </div>
+            </div>
+
+            <!-- Chat IDs -->
+            <div class="bento-card">
+                <div class="card-header">
+                    <h2>👥 Contatos</h2>
+                </div>
+                <div class="contacts-list">
+                    <div class="contact-item">
+                        <span class="contact-name">Você (Netto)</span>
+                        <code class="contact-id">6582122066</code>
+                    </div>
+                    <div class="contact-item">
+                        <span class="contact-name">Ana Carolina</span>
+                        <code class="contact-id">8181568281</code>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stats -->
+            <div class="bento-card card-stats">
+                <div class="stats-grid">
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-reminders">0</div>
+                        <div class="stat-label">Lembretes Criados</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-value" id="total-messages">0</div>
+                        <div class="stat-label">Mensagens Enviadas</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal: Novo Lembrete -->
+    <div id="reminder-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>🔔 Criar Lembrete</h2>
+                <button class="close-btn" onclick="closeModal('reminder-modal')">&times;</button>
+            </div>
+            <form id="reminder-form" onsubmit="createReminder(event)">
+                <div class="form-group">
+                    <label>Mensagem do Lembrete</label>
+                    <input type="text" id="reminder-text" placeholder="Ex: Beber água" required>
+                </div>
+                <div class="form-group">
+                    <label>Quando?</label>
+                    <select id="reminder-time-type" onchange="toggleCustomTime()">
+                        <option value="15min">Daqui a 15 minutos</option>
+                        <option value="30min">Daqui a 30 minutos</option>
+                        <option value="1hour">Daqui a 1 hora</option>
+                        <option value="2hours">Daqui a 2 horas</option>
+                        <option value="custom">Personalizado</option>
+                    </select>
+                </div>
+                <div class="form-group" id="custom-time-group" style="display: none;">
+                    <label>Tempo Personalizado</label>
+                    <input type="text" id="custom-time" placeholder='Ex: "in 45 minutes" ou "em 3 horas"'>
+                </div>
+                <button type="submit" class="submit-btn">Criar Lembrete</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Enviar Mensagem -->
+    <div id="message-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>💬 Enviar Mensagem</h2>
+                <button class="close-btn" onclick="closeModal('message-modal')">&times;</button>
+            </div>
+            <form id="message-form" onsubmit="sendMessage(event)">
+                <div class="form-group">
+                    <label>Para</label>
+                    <select id="message-to" required>
+                        <option value="6582122066">Você (Netto)</option>
+                        <option value="8181568281">Ana Carolina</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Mensagem</label>
+                    <textarea id="message-text" rows="4" placeholder="Digite sua mensagem..." required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Enviar Agora</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
