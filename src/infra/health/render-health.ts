@@ -40,6 +40,9 @@ export function renderHealth(
       if (c.recommendation) {
         lines.push(`   👉 Recomendação: ${c.recommendation}`);
       }
+      if (c.repair_executed) {
+        lines.push(`   🛠️ Reparo Executado: ${c.repair_log}`);
+      }
       if (c.details && Object.keys(c.details).length > 0) {
         // show details as mini-yaml (readable)
         const detailsYaml = toYaml(c.details);

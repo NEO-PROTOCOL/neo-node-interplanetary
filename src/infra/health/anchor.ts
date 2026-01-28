@@ -38,3 +38,23 @@ export async function createHealthAnchor() {
   fs.writeFileSync(anchorPath, JSON.stringify(anchor, null, 2));
   return anchor;
 }
+
+export async function getLatestAnchor() {
+  const ledgerPath = getLedgerFilePath();
+  const stateDir = path.dirname(ledgerPath);
+  const anchorsDir = path.join(stateDir, "anchors");
+
+  if (!fs.existsSync(anchorsDir)) return null;
+
+  const files = fs
+    .readdirSync(anchorsDir)
+    .filter((f) => f.startsWith("anchor-") && f.endsWith(".json"))
+    .sort()
+    .reverse();
+
+  if (files.length === 0) return null;
+
+  const latestFile = path.join(anchorsDir, files[0]);
+  const content = fs.readFileSync(latestFile, "utf-8");
+  return JSON.parse(content);
+}

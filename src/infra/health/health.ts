@@ -7,12 +7,12 @@ import { checkChannelsStatus } from "./checks/check-channels.js";
 import { checkSchedulerStatus } from "./checks/check-scheduler.js";
 
 export async function runHealthCheck(
-  options: { sinceHours?: number } = {},
+  options: { sinceHours?: number; doRepair?: boolean } = {},
 ): Promise<GlobalHealthReport> {
   const checks = await Promise.all([
     checkNodeStatus(),
     checkRuntimeConfigStatus(),
-    checkLedgerIntegrity(),
+    checkLedgerIntegrity(options.doRepair),
     checkSkillsStatus(options.sinceHours ?? 24),
     checkChannelsStatus(),
     checkSchedulerStatus(),

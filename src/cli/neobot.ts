@@ -39,8 +39,9 @@ Usage:
   neobot cron list                   Listar tarefas agendadas
   neobot cron run <job>              Executar tarefa manualmente
   neobot cron start                  Iniciar o agendador (scheduler)
-  neobot health [--full] [--json|--yaml|--chat]    Diagnóstico de saúde do sistema
+  neobot health [--full] [--json|--yaml|--chat] [--repair]    Diagnóstico de saúde do sistema
   neobot explain <id>                Explica um evento do ledger em PT-BR
+  neobot anchor latest               Exibe a última âncora de saúde gerada
 
 Exemplos:
   pnpm neobot run ops-status
@@ -71,10 +72,11 @@ async function main() {
 
     const format = isJson ? "json" : isYaml ? "yaml" : "chat";
     const isFull = allArgs.includes("--full");
+    const doRepair = allArgs.includes("--repair");
     const sinceIdx = allArgs.indexOf("--since");
     const sinceHours = sinceIdx !== -1 ? parseInt(allArgs[sinceIdx + 1]) || 24 : 24;
 
-    const report = await runHealthCheck({ sinceHours });
+    const report = await runHealthCheck({ sinceHours, doRepair });
     console.log(renderHealth(report, format, isFull));
 
     process.exit(report.overall_status === "fail" ? 1 : 0);
@@ -90,6 +92,23 @@ async function main() {
     const explanation = await explainEvent(eventId);
     console.log(explanation);
     process.exit(0);
+  }
+
+  if (cmd === "anchor") {
+    if (subcmd === "latest") {
+      const { getLatestAnchor } = await import("../infra/health/anchor.js");
+      const latest = await getLatestAnchor();
+      if (!latest) {
+        console.log("❌ Nenhuma âncora encontrada.");
+        process.exit(1);
+      }
+      console.log("\n⚓ **ÚLTIMA ÂNCORA DE SAÚDE**");
+      console.log(`Data: ${latest.date}`);
+      console.log(`Hash: ${latest.ledger_hash}`);
+      console.log(`Linha: ${latest.checkpoint_line}`);
+      console.log(`Gerada em: ${latest.ts}`);
+      process.exit(0);
+    }
   }
 
   if (cmd === "cron") {

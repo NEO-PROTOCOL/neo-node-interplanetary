@@ -13,10 +13,13 @@ interface LedgerCheckpoint {
   ts: string;
 }
 
-export async function checkLedgerIntegrity(): Promise<HealthCheckResult> {
+export async function checkLedgerIntegrity(doRepair: boolean = false): Promise<HealthCheckResult> {
   const ledgerPath = getLedgerFilePath();
   const stateDir = path.dirname(ledgerPath);
   const checkpointPath = path.join(stateDir, CHECKPOINT_FILE);
+
+  let repairExecuted = false;
+  let repairLog = "";
 
   if (!fs.existsSync(ledgerPath)) {
     return {
@@ -56,6 +59,14 @@ export async function checkLedgerIntegrity(): Promise<HealthCheckResult> {
       }
     }
 
+    // Repair logic
+    if (status === "fail" && doRepair) {
+      repairExecuted = true;
+      repairLog = `Checkpoint antigo ignorado e sobrescrito para a linha ${lineCount}.`;
+      status = "ok";
+      summary = `Integridade resetada para o estado atual (${lineCount} eventos).`;
+    }
+
     if (status === "ok") {
       const newCheckpoint: LedgerCheckpoint = {
         ledger_path: ledgerPath,
@@ -74,6 +85,8 @@ export async function checkLedgerIntegrity(): Promise<HealthCheckResult> {
         event_count: lineCount,
         last_hash: currentHash,
       },
+      repair_executed: repairExecuted,
+      repair_log: repairLog,
     };
   } catch (error: any) {
     return {

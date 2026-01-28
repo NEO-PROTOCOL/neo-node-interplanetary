@@ -12,7 +12,7 @@ export const dailyOpsStatusJob = {
       scriptPath: "skills/ops-status/scripts/report.sh",
       args: ["full"],
       risk: "low",
-      channel: "unknown",
+      channel: "scheduler",
       actor: "cron", // Critical: Identifying as system-driven
     });
 
@@ -26,7 +26,7 @@ export const dailyOpsStatusJob = {
       const anchor = await createHealthAnchor();
       let anchorInfo = "";
       if (anchor) {
-        anchorInfo = `\n\n⚓ *Health Anchor (Local)*\nHash: \`${anchor.ledger_hash.substring(0, 16)}...\`\nLinha: ${anchor.checkpoint_line}`;
+        anchorInfo = `\n\n⚓ *ÂNCORA DE SAÚDE*\ndate: ${anchor.date}\nledger_hash: \`${anchor.ledger_hash.substring(0, 16)}...\`\ncheckpoint_line: ${anchor.checkpoint_line}\n\ncmd: \`pnpm neobot health --full\``;
       }
 
       const telegramMessage = `📊 *Relatório Diário de Operações - ${reportDate}*\n\n${result.stdout.trim()}${anchorInfo}`;

@@ -6,6 +6,8 @@ export interface HealthCheckResult {
   summary: string;
   details?: Record<string, any>;
   recommendation?: string;
+  repair_executed?: boolean;
+  repair_log?: string;
 }
 
 export interface GlobalHealthReport {
