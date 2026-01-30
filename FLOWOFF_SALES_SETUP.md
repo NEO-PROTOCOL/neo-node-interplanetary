@@ -32,18 +32,22 @@
 
 ---
 
-### 2. System Prompt de Vendas
+### 2. System Prompt de Vendas (v1.1 Blindado)
 
 **Criado:** `AGENTS_FLOWOFF_SALES.md`
 
 **Contém:**
-- ✅ Contexto de negócio (NEØ FlowOFF)
-- ✅ 4 produtos com detalhes (START, SALES, SYSTEMS, LEDGER)
+- ✅ Sistema de 2 camadas (Oferta Pública vs Real)
+- ✅ 4 produtos FlowOFF (START, SALES, SYSTEMS, LEDGER)
+- ✅ Roteiro operacional em 5 etapas
 - ✅ Gatilhos para enviar pitch do Canva
 - ✅ Scripts prontos de resposta
-- ✅ Tom de voz (técnico, sem frescura)
-- ✅ Sistema de tags (qualificação)
-- ✅ Sequência de fechamento
+- ✅ Tom consultivo e premium
+- ✅ FAQ oficial com respostas padronizadas
+- ✅ Sistema de tags CRM avançado
+- ✅ Sequência obrigatória pós-link
+- ✅ Fechamento temporal ('hoje ou amanhã?')
+- ✅ Anti-spam/rate limit (1 link por lead)
 
 ---
 
@@ -73,27 +77,41 @@ OPÇÃO B: Escalona pro Mellø
 
 ---
 
-## 📦 Produtos & Gatilhos
+## 📦 Produtos & Ofertas (2 Camadas)
 
-### Produto 1: FlowOFF START
-**Pitch:** Landing + WhatsApp OS + Tracking  
-**Prazo:** 7-10 dias  
-**Gatilho:** Lead quer "começar rápido", "MVP", "tráfego imediato"
+### CAMADA 1: Oferta Pública (Pitch Canva)
 
-### Produto 2: FlowOFF SALES
-**Pitch:** CRM + Automação + Follow-up  
-**Prazo:** 10-15 dias  
-**Gatilho:** Lead quer "escalar", "vender mais", "automação"
+**Para:** Leads frios, curiosos, quem quer "site"
 
-### Produto 3: FlowOFF SYSTEMS
-**Pitch:** WebApp / Sistema interno  
-**Prazo:** 15-20 dias  
-**Gatilho:** Lead quer "plataforma", "área de membros", "sistema completo"
+- **Start:** R$ 1.500 (site simples)
+- **Profissional:** R$ 2.500 (site intermediário)
+- **Premium:** R$ 4.000 (site completo)
 
-### Produto 4: FlowOFF LEDGER
-**Pitch:** Estado auditável / Plataforma  
-**Prazo:** 20+ dias  
-**Gatilho:** Lead quer "não depender de big tech", "governança", "auditoria"
+### CAMADA 2: Oferta Real (Sistema FlowOFF)
+
+**Para:** Quem roda tráfego, precisa automação/CRM/sistemas
+
+**1) FlowOFF START (MVP)**
+- Landing + WhatsApp OS + Tracking
+- Prazo: 7-10 dias
+- Faixa: R$ 2k-5k
+
+**2) FlowOFF SALES (Money Maker)**
+- CRM + Automação + Pipeline
+- Prazo: 10-15 dias
+- Faixa: R$ 5k-12k
+
+**3) FlowOFF SYSTEMS (Core)**
+- WebApp / Sistema interno completo
+- Prazo: 15-30 dias
+- Faixa: R$ 12k-30k
+
+**4) FlowOFF LEDGER (Diferencial)**
+- Estado auditável / Plataforma
+- Prazo: 30-60 dias
+- Faixa: R$ 30k+
+
+**REGRA CRÍTICA:** Se lead perguntar "quanto custa site?", usar oferta pública. Se pedir "automação/CRM/sistema", usar oferta real.
 
 ---
 
@@ -173,26 +191,27 @@ Perfeito. Pra te passar o valor final certinho: qual prazo ideal e qual faixa de
 
 ---
 
-## 🏷️ Sistema de Tags
+## 🏷️ Sistema de Tags (CRM Avançado)
 
 O LLM registra automaticamente:
 
-**Estágio:**
-- `COLD` → Primeiro contato
-- `WARM` → Demonstrou interesse  
-- `HOT` → Pediu proposta
-- `CLOSING` → Negociação ativa
+**PRODUTO_PUBLICO:**
+- `START_SITE` / `PROFISSIONAL_SITE` / `PREMIUM_SITE`
 
-**Produto:**
+**PRODUTO_REAL:**
 - `START` / `SALES` / `SYSTEMS` / `LEDGER`
 
-**Objeções:**
-- `PRECO` / `PRAZO` / `DESCONFIADO` / `CONCORRENTE`
+**PRAZO:**
+- `URGENTE(7d)` / `MEDIO(15d)` / `LONGO(30d+)`
 
-**Ações:**
-- `PITCH_ENVIADO`
-- `FOLLOWUP_1D`
-- `ESCALONA_MELLO`
+**BUDGET:**
+- `LOW(<2k)` / `MID(2-5k)` / `HIGH(5-15k)` / `ULTRA(15k+)`
+
+**STATUS:**
+- `NOVO` / `QUALIFICANDO` / `PROPOSTA` / `AGENDADO` / `FECHADO` / `PERDIDO`
+
+**DOR:**
+- `VISIBILIDADE` / `CONVERSAO` / `ESCALA` / `OPERACAO` / `PLATAFORMA`
 
 ---
 
