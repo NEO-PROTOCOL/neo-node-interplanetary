@@ -253,12 +253,14 @@
     "wireit": "^0.14.12"
   },
   "overrides": {
-    "tar": "7.5.4"
+    "tar": "7.5.4",
+    "form-data": "2.5.4"
   },
   "pnpm": {
     "minimumReleaseAge": 2880,
     "overrides": {
       "@sinclair/typebox": "0.34.47",
+      "form-data": "2.5.4",
       "hono": "^4.11.7",
       "tar": "7.5.4"
     }
