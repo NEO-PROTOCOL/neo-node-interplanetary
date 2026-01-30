@@ -9,6 +9,7 @@ Documento de referência para **qualquer agente de IA** que edite ou crie Markdo
 - **Todas as linhas** de conteúdo, bordas e títulos devem respeitar **64 caracteres** de largura (incluindo os caracteres da borda).
 - Quebre parágrafos longos em linhas de até 64 caracteres.
 - Em caixas: conteúdo entre `│` ou `┃` deve caber na largura interna (62 caracteres entre as bordas).
+- **GitHub:** para o README (e qualquer doc exibido no GitHub), envolva blocos com bordas/ASCII em ` ```text ... ``` ` para que a fonte seja monoespaçada e o alinhamento seja preservado na renderização.
 
 ---
 

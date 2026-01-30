@@ -1,10 +1,13 @@
-<!-- markdownlint-disable MD003 MD007 MD022 MD023 MD025 MD029 MD032 MD033 MD034 -->
+<!-- markdownlint-disable MD003 MD007 MD022 MD023 MD025 MD029 MD032 MD033 MD034 MD041 -->
+
+```text
 ========================================================================
                     NEØ PROTOCOL — BEYOND AI ASSISTANTS
 ========================================================================
 [####] Built on Moltbot ............................................ OK
 [####] Web3 · Decentralized · Self-hosted .......................... OK
 ========================================================================
+```
 
 <p align="center">
   <img src="docs/assets/neobot-logo.png" alt="NEØ Protocol" width="400">
@@ -25,12 +28,14 @@ your infrastructure, with your rules, following Web3 principles.
 
 Born from Moltbot's industrial-grade foundation. Hybrid architecture:
 
+```text
 ┌────────────────────────────────────────────────────────────────┐
 │ ▓▓▓ STACK                                                      │
 ├────────────────────────────────────────────────────────────────┤
 │ └─ 40% Moltbot Core  → Gateway, channels, agent runtime        │
 │ └─ 60% NEØ Layer    → IPFS, Web3 identity, self-hosted         │
 └────────────────────────────────────────────────────────────────┘
+```
 
 Why it matters: traditional assistants lock you into centralized
 platforms. NEØ gives you self-sovereignty, decentralization,
@@ -46,6 +51,7 @@ sophisticated AI assistant control plane. NEØ extends that foundation.
 > "Moltbot gave us the engine. NEØ Protocol is breaking the speed
 > limits."
 
+```text
 ┌────────────────────────────────────────────────────────────────┐
 │ ▓▓▓ FROM MOLTBOT                                               │
 ├────────────────────────────────────────────────────────────────┤
@@ -59,6 +65,7 @@ sophisticated AI assistant control plane. NEØ extends that foundation.
 │ └─ IPFS Skills Registry, mio-system Identity                   │
 │ └─ Web3 Extensions (PubSub, Nostr, signer), NEØ Dashboard      │
 └────────────────────────────────────────────────────────────────┘
+```
 
 ========================================================================
                          CORE FEATURES (RESUMO)
@@ -88,15 +95,10 @@ integration, NFT-based skills, DAO governance. Phase 1 in progress.
                          DOCUMENTATION
 ========================================================================
 
-┌────────────────────────────────────────────────────────────────┐
-│ ▓▓▓ ESSENTIAL                                                  │
-├────────────────────────────────────────────────────────────────┤
-│ └─ [SETUP.md](SETUP.md) — Clone, install, comandos, contribuir │
-│ └─ [ARCHITECTURE_NEO_PROTOCOL.md](ARCHITECTURE_NEO_PROTOCOL.md)│
-│    — Arquitetura completa                                      │
-│ └─ [NEXT_STEPS_V2.md](NEXT_STEPS_V2.md) — Roadmap 8 semanas    │
-│ └─ [markdown-neo](.cursor/standards/markdown-neo.md) — Padrão  │
-└────────────────────────────────────────────────────────────────┘
+- **[SETUP.md](SETUP.md)** — Clone, install, comandos, contribuir
+- **[ARCHITECTURE_NEO_PROTOCOL.md](ARCHITECTURE_NEO_PROTOCOL.md)** — Arquitetura completa
+- **[NEXT_STEPS_V2.md](NEXT_STEPS_V2.md)** — Roadmap 8 semanas
+- **[markdown-neo](.cursor/standards/markdown-neo.md)** — Padrão de escrita para docs
 
 Upstream: <https://docs.molt.bot>
 
@@ -131,6 +133,7 @@ community for updates.
 
 ========================================================================
 
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │ ▓▓▓ NΞØ MELLØ                                                   │
 │     Core Architect · NΞØ Protocol                               │
@@ -140,3 +143,4 @@ community for updates.
 │                                                                 │
 │     Security by design. Exploits find no refuge here.           │
 └─────────────────────────────────────────────────────────────────┘
+```
