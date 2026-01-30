@@ -53,3 +53,5 @@ out/
 *.pfx
 secrets/
 credentials/
+.cursor/mcp.backup.json
+.cursor/mcp*.json
