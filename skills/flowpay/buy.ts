@@ -67,15 +67,15 @@ export async function execute(ctx: any, input: BuyInput): Promise<BuyOutput> {
       } as BuyOutput;
     }
 
-    // Call FlowPay API (Woovi/OpenPix)
-    const flowpayUrl = process.env.FLOWPAY_API_URL || 'https://flowpaypix.netlify.app/api';
+    // Call FlowPay API (Railway production)
+    const flowpayUrl = process.env.FLOWPAY_API_URL || 'https://flowpay-production-10d8.up.railway.app/api';
     const apiKey = process.env.FLOWPAY_API_KEY || process.env.OPENPIX_API_KEY;
 
     if (!apiKey) {
       throw new Error('FLOWPAY_API_KEY or OPENPIX_API_KEY not configured');
     }
 
-    const response = await fetch(`${flowpayUrl}/charges/create`, {
+    const response = await fetch(`${flowpayUrl}/pix/create-charge`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

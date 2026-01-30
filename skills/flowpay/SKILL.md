@@ -70,11 +70,11 @@ Returns:
 
 FlowPay runs independently at:
 
-- **Production:** flowpaypix.netlify.app
+- **Production:** flowpay-production-10d8.up.railway.app
 - **Local:** /CODIGOS/flowpay/
-- **GitHub:** neomello/flowpay
-- **Deploy:** Netlify (auto)
-- **Status:** 90% complete
+- **GitHub:** flowpaycash/flowpay
+- **Deploy:** Railway (auto)
+- **Status:** PRODUCTION ✅
 
 ## Tech Stack
 
