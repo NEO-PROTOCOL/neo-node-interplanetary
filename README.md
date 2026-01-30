@@ -19,9 +19,11 @@
   <a href="LICENSE"><img src="https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge" alt="MIT"></a>
 </p>
 
+```text
 ========================================================================
                          WHAT IS NEØ PROTOCOL?
 ========================================================================
+```
 
 NEØ Protocol is a decentralized AI assistant control plane that runs on
 your infrastructure, with your rules, following Web3 principles.
@@ -41,9 +43,11 @@ Why it matters: traditional assistants lock you into centralized
 platforms. NEØ gives you self-sovereignty, decentralization,
 transparency, resilience, and privacy.
 
+```text
 ========================================================================
                       RECOGNITION & FOUNDATION
 ========================================================================
+```
 
 We recognize Moltbot and Peter Steinberger for building the most
 sophisticated AI assistant control plane. NEØ extends that foundation.
@@ -67,9 +71,11 @@ sophisticated AI assistant control plane. NEØ extends that foundation.
 └────────────────────────────────────────────────────────────────┘
 ```
 
+```text
 ========================================================================
                          CORE FEATURES (RESUMO)
 ========================================================================
+```
 
 - IPFS Skills Registry (content-addressed, verifiable, censorship-
   resistant)
@@ -79,9 +85,11 @@ sophisticated AI assistant control plane. NEØ extends that foundation.
 
 Setup e comandos: ver [SETUP.md](SETUP.md).
 
+```text
 ========================================================================
                     WHAT MAKES NEØ DIFFERENT?
 ========================================================================
+```
 
 - Hosting: your infrastructure (no vendor lock-in)
 - Skills: IPFS decentralized (vs centralized)
@@ -91,9 +99,11 @@ Setup e comandos: ver [SETUP.md](SETUP.md).
 Vision: decentralized AI mesh, federated learning, blockchain
 integration, NFT-based skills, DAO governance. Phase 1 in progress.
 
+```text
 ========================================================================
                          DOCUMENTATION
 ========================================================================
+```
 
 - **[SETUP.md](SETUP.md)** — Clone, install, comandos, contribuir
 - **[ARCHITECTURE_NEO_PROTOCOL.md](ARCHITECTURE_NEO_PROTOCOL.md)** — Arquitetura completa
@@ -102,9 +112,11 @@ integration, NFT-based skills, DAO governance. Phase 1 in progress.
 
 Upstream: <https://docs.molt.bot>
 
+```text
 ========================================================================
                     COMMUNITY & ROADMAP (RESUMO)
 ========================================================================
+```
 
 - Twitter/X: @neoprotocol | Telegram: @neoprotocol
 - Email: neo@neoprotocol.space | Site: neoprotocol.space (em breve)
@@ -112,9 +124,11 @@ Upstream: <https://docs.molt.bot>
 Roadmap: Phase 1.0 IN PROGRESS (Foundation, Extensions, Docs, Release
 v1.0.0). Detalhes em [NEXT_STEPS_V2.md](NEXT_STEPS_V2.md).
 
+```text
 ========================================================================
                          LICENSE & DISCLAIMER
 ========================================================================
+```
 
 - Moltbot Core (src/): MIT (upstream)
 - NEØ Layer (neo/, skills/, dashboard/): MIT
@@ -123,15 +137,19 @@ NEØ Protocol is in active development. Phase 1.0 expected completion
 Feb 2026. Some features experimental. Production use at your own risk
 until v1.0.0.
 
+```text
 ========================================================================
                            CALL TO ACTION
 ========================================================================
+```
 
 Star the repo · Read [SETUP.md](SETUP.md) to run locally · Check
 [ARCHITECTURE_NEO_PROTOCOL.md](ARCHITECTURE_NEO_PROTOCOL.md) · Join
 community for updates.
 
+```text
 ========================================================================
+```
 
 ```text
 ┌─────────────────────────────────────────────────────────────────┐
