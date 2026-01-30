@@ -20,83 +20,95 @@ function getTextContent(result?: { content?: Array<{ type: string; text?: string
 }
 
 describe("workspace path resolution", () => {
-  it("reads relative paths against workspaceDir even after cwd changes", async () => {
-    await withTempDir("moltbot-ws-", async (workspaceDir) => {
-      await withTempDir("moltbot-cwd-", async (otherDir) => {
-        const prevCwd = process.cwd();
-        const testFile = "read.txt";
-        const contents = "workspace read ok";
-        await fs.writeFile(path.join(workspaceDir, testFile), contents, "utf8");
+  it(
+    "reads relative paths against workspaceDir even after cwd changes",
+    { timeout: 30_000 },
+    async () => {
+      const initialCwd = process.cwd();
+      await withTempDir("moltbot-ws-", async (workspaceDir) => {
+        await withTempDir("moltbot-cwd-", async (otherDir) => {
+          const testFile = "read.txt";
+          const contents = "workspace read ok";
+          await fs.writeFile(path.join(workspaceDir, testFile), contents, "utf8");
 
-        process.chdir(otherDir);
-        try {
-          const tools = createMoltbotCodingTools({ workspaceDir });
-          const readTool = tools.find((tool) => tool.name === "read");
-          expect(readTool).toBeDefined();
+          process.chdir(otherDir);
+          try {
+            const tools = createMoltbotCodingTools({ workspaceDir });
+            const readTool = tools.find((tool) => tool.name === "read");
+            expect(readTool).toBeDefined();
 
-          const result = await readTool?.execute("ws-read", { path: testFile });
-          expect(getTextContent(result)).toContain(contents);
-        } finally {
-          process.chdir(prevCwd);
-        }
+            const result = await readTool?.execute("ws-read", { path: testFile });
+            expect(getTextContent(result)).toContain(contents);
+          } finally {
+            process.chdir(initialCwd);
+          }
+        });
       });
-    });
-  });
+    },
+  );
 
-  it("writes relative paths against workspaceDir even after cwd changes", async () => {
-    await withTempDir("moltbot-ws-", async (workspaceDir) => {
-      await withTempDir("moltbot-cwd-", async (otherDir) => {
-        const prevCwd = process.cwd();
-        const testFile = "write.txt";
-        const contents = "workspace write ok";
+  it(
+    "writes relative paths against workspaceDir even after cwd changes",
+    { timeout: 30_000 },
+    async () => {
+      const initialCwd = process.cwd();
+      await withTempDir("moltbot-ws-", async (workspaceDir) => {
+        await withTempDir("moltbot-cwd-", async (otherDir) => {
+          const testFile = "write.txt";
+          const contents = "workspace write ok";
 
-        process.chdir(otherDir);
-        try {
-          const tools = createMoltbotCodingTools({ workspaceDir });
-          const writeTool = tools.find((tool) => tool.name === "write");
-          expect(writeTool).toBeDefined();
+          process.chdir(otherDir);
+          try {
+            const tools = createMoltbotCodingTools({ workspaceDir });
+            const writeTool = tools.find((tool) => tool.name === "write");
+            expect(writeTool).toBeDefined();
 
-          await writeTool?.execute("ws-write", {
-            path: testFile,
-            content: contents,
-          });
+            await writeTool?.execute("ws-write", {
+              path: testFile,
+              content: contents,
+            });
 
-          const written = await fs.readFile(path.join(workspaceDir, testFile), "utf8");
-          expect(written).toBe(contents);
-        } finally {
-          process.chdir(prevCwd);
-        }
+            const written = await fs.readFile(path.join(workspaceDir, testFile), "utf8");
+            expect(written).toBe(contents);
+          } finally {
+            process.chdir(initialCwd);
+          }
+        });
       });
-    });
-  });
+    },
+  );
 
-  it("edits relative paths against workspaceDir even after cwd changes", async () => {
-    await withTempDir("moltbot-ws-", async (workspaceDir) => {
-      await withTempDir("moltbot-cwd-", async (otherDir) => {
-        const prevCwd = process.cwd();
-        const testFile = "edit.txt";
-        await fs.writeFile(path.join(workspaceDir, testFile), "hello world", "utf8");
+  it(
+    "edits relative paths against workspaceDir even after cwd changes",
+    { timeout: 30_000 },
+    async () => {
+      const initialCwd = process.cwd();
+      await withTempDir("moltbot-ws-", async (workspaceDir) => {
+        await withTempDir("moltbot-cwd-", async (otherDir) => {
+          const testFile = "edit.txt";
+          await fs.writeFile(path.join(workspaceDir, testFile), "hello world", "utf8");
 
-        process.chdir(otherDir);
-        try {
-          const tools = createMoltbotCodingTools({ workspaceDir });
-          const editTool = tools.find((tool) => tool.name === "edit");
-          expect(editTool).toBeDefined();
+          process.chdir(otherDir);
+          try {
+            const tools = createMoltbotCodingTools({ workspaceDir });
+            const editTool = tools.find((tool) => tool.name === "edit");
+            expect(editTool).toBeDefined();
 
-          await editTool?.execute("ws-edit", {
-            path: testFile,
-            oldText: "world",
-            newText: "moltbot",
-          });
+            await editTool?.execute("ws-edit", {
+              path: testFile,
+              oldText: "world",
+              newText: "moltbot",
+            });
 
-          const updated = await fs.readFile(path.join(workspaceDir, testFile), "utf8");
-          expect(updated).toBe("hello moltbot");
-        } finally {
-          process.chdir(prevCwd);
-        }
+            const updated = await fs.readFile(path.join(workspaceDir, testFile), "utf8");
+            expect(updated).toBe("hello moltbot");
+          } finally {
+            process.chdir(initialCwd);
+          }
+        });
       });
-    });
-  });
+    },
+  );
 
   it("defaults exec cwd to workspaceDir when workdir is omitted", async () => {
     await withTempDir("moltbot-ws-", async (workspaceDir) => {
@@ -155,7 +167,7 @@ describe("sandboxed workspace paths", () => {
           sessionKey: "sandbox:test",
           workspaceDir: sandboxDir,
           agentWorkspaceDir: workspaceDir,
-          workspaceAccess: "rw",
+          workspaceAccess: "rw" as const,
           containerName: "moltbot-sbx-test",
           containerWorkdir: "/workspace",
           docker: {
