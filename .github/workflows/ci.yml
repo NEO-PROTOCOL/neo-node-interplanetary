@@ -3,6 +3,8 @@
 # - Full: In Settings > Secrets and variables > Actions > Variables, add NEO_CI_FULL = true
 #   to enable checks-windows and android.
 # - Bun: uncomment the 2 "runtime: bun" entries in the checks matrix to run with Bun.
+# - Runners: GitHub-hosted (ubuntu-24.04 / windows-latest). To use Blacksmith when healthy,
+#   replace with blacksmith-4vcpu-ubuntu-2404 and blacksmith-4vcpu-windows-2025.
 name: CI
 
 on:
@@ -11,7 +13,7 @@ on:
 
 jobs:
   install-check:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -71,7 +73,7 @@ jobs:
           pnpm install --frozen-lockfile --ignore-scripts=false --config.engine-strict=false --config.enable-pre-post-scripts=true
 
   checks:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
@@ -167,7 +169,7 @@ jobs:
         run: ${{ matrix.command }}
 
   secrets:
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -193,7 +195,7 @@ jobs:
 
   checks-windows:
     if: vars.NEO_CI_FULL == 'true'
-    runs-on: blacksmith-4vcpu-windows-2025
+    runs-on: windows-latest
     env:
       NODE_OPTIONS: --max-old-space-size=4096
       CLAWDBOT_TEST_WORKERS: 1
@@ -599,7 +601,7 @@ jobs:
 
   android:
     if: vars.NEO_CI_FULL == 'true'
-    runs-on: blacksmith-4vcpu-ubuntu-2404
+    runs-on: ubuntu-24.04
     strategy:
       fail-fast: false
       matrix:
