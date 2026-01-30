@@ -263,6 +263,108 @@ Next Steps for Integration
 ```
 
 ────────────────────────────────────────
+Integration Complete
+────────────────────────────────────────
+
+## ✅ NEO Commands Registered
+
+**Files created:**
+
+```text
+src/cli/program/register.neo.ts
+  └── Registered all NEO commands
+
+src/cli/program/command-registry.ts
+  └── Added NEO to command registry
+```
+
+**Commands verified:**
+
+```bash
+# Test 1: neo info
+pnpm moltbot neo info
+# Result: SUCCESS ✓
+
+# Test 2: neo skill help
+pnpm moltbot neo skill --help
+# Result: SUCCESS ✓
+# Commands: publish, install, list
+```
+
+**Output sample:**
+
+```text
+╔═══════════════════════════════════╗
+║  NEO PROTOCOL STACK v1.0.0-alpha  ║
+╚═══════════════════════════════════╝
+
+📦 Componentes
+Registry: IPFS-based Skills Registry
+Identity: mio-system Web3 Identity
+Gateway: Web3-native Extensions
+Dashboard: iOS-style Management UI
+
+🔐 9 Identidades mio-system
+📊 60% NEO Layer (decentralized)
+🔗 Links: GitHub, Docs, Architecture
+```
+
+────────────────────────────────────────
+Discovery Process
+────────────────────────────────────────
+
+## Problem #1: Node Version Mismatch
+
+**Issue:** Node v20.19.6 detected but
+requires >= 22.0.0
+
+**Solution:**
+
+```bash
+# .nvmrc exists with version 22
+nvm use
+# → Now using node v22.22.0 ✓
+```
+
+## Problem #2: Gateway Token Mismatch
+
+**Issue:** `unauthorized: gateway token
+mismatch`
+
+**Root cause:** Removed token but mode
+still set to "token"
+
+**Solution:**
+
+```bash
+# Restore token
+pnpm moltbot config set \
+  gateway.auth.token neobot
+
+# Start gateway with token
+CLAWDBOT_GATEWAY_TOKEN=neobot \
+  pnpm moltbot gateway --port 18789
+```
+
+**Result:** Gateway started successfully
+
+## Problem #3: NEO Commands Not Found
+
+**Issue:** `unknown command 'neo:info'`
+
+**Root cause:** Commands created but not
+registered in CLI
+
+**Solution:**
+
+1. Created `register.neo.ts`
+2. Added import to `command-registry.ts`
+3. Added to `commandRegistry` array
+4. Rebuild: `pnpm build`
+
+**Result:** All NEO commands working ✓
+
+────────────────────────────────────────
 Conclusion
 ────────────────────────────────────────
 
@@ -275,16 +377,20 @@ Conclusion
 [####] Telegram connected .......... OK
 ```
 
-**NEO Integration: PENDING**
+**NEO Integration: COMPLETE**
 
-CLI commands exist but need registration
-in main program. Code is ready, just
-needs wiring.
+```text
+[####] register.neo.ts ............. OK
+[####] command-registry updated .... OK
+[####] Build successful ............ OK
+[####] neo info .................... OK
+[####] neo skill ................... OK
+```
 
 ```text
 ========================================
    WHATSAPP: READY FOR PRODUCTION
-   NEO COMMANDS: READY FOR INTEGRATION
+   NEO COMMANDS: FULLY INTEGRATED
 ========================================
 ```
 
