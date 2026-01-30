@@ -55,3 +55,14 @@ secrets/
 credentials/
 .cursor/mcp.backup.json
 .cursor/mcp*.json
+
+# FlowPay (Sensitive Data)
+data/flowpay/*.db
+data/flowpay/*.sqlite
+data/flowpay/orders/*.json
+data/flowpay/receipts/*.json
+data/flowpay/products/*.json
+
+# Clawdbot config (pode conter tokens)
+.clawdbot/moltbot.json
+.clawdbot/*.json
