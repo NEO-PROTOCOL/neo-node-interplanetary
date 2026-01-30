@@ -1,18 +1,16 @@
 # 🎯 NEXT STEPS · NEØ Protocol
 
-**Data:** 29-30 Janeiro 2026  
+**Data:** 30 Janeiro 2026  
 **Node Arquiteto:** Mellø  
-**Status:** ✅ 100% COMPLETO - Mission Accomplished!
+**Status:** 🚀 FASE 1.0 - NEO PROTOCOL STACK
 
 ---
 
 ## 📊 Visão Geral
 
-~~Este documento organiza TODAS as tarefas pendentes, em progresso e bloqueadas do ecossistema NEØ Protocol. Use como tracking central para não se perder.~~
+**🎆 FASE 0.1 COMPLETA (14/14 TODOS) - INICIANDO FASE 1.0**
 
-**🎆 MISSÃO COMPLETA: 14/14 TODOS FINALIZADOS (100%)**
-
-Todas as tarefas da Fase 0.1 (Consolidação) foram completadas com sucesso:
+Fase 0.1 (Consolidação) foi 100% completada:
 
 - ✅ WhatsApp ativado (+5562983231110)
 - ✅ Telegram Bot integrado
@@ -26,7 +24,301 @@ Todas as tarefas da Fase 0.1 (Consolidação) foram completadas com sucesso:
 
 ---
 
-## ✅ COMPLETO - Todas Tarefas Críticas Finalizadas
+## 🔷 FASE 1.0: NEO PROTOCOL STACK (NOVO)
+
+**Objetivo:** Criar camada descentralizada e autônoma sobre Moltbot Core
+
+**Arquitetura:** Ver [ARCHITECTURE_NEO_PROTOCOL.md](./ARCHITECTURE_NEO_PROTOCOL.md)
+
+**Estratégia Híbrida:**
+
+- ⬆️ **MANTÉM:** Moltbot Core sincronizado (gateway, channels, agent runtime)
+- 🔷 **CRIA:** NEO Layer independente (IPFS registry, mio-identity, docs, extensions)
+- 🎯 **META:** 60% autonomia NEO + 40% upstream stability
+
+---
+
+## 🚧 EM PROGRESSO - NEO Protocol Stack
+
+### 📋 Fase 1: Foundation (Semanas 1-2)
+
+#### 1.1 🏗️ Estrutura NEO Directory
+
+**Objetivo:** Criar arquitetura base do NEO Protocol
+
+**Tasks:**
+- [ ] Criar `neo/` root directory
+- [ ] Setup `neo/registry/` (IPFS Skills Registry)
+- [ ] Setup `neo/identity/` (mio-system)
+- [ ] Setup `neo/gateway/` (Extensions)
+- [ ] Setup `neo/cli/` (Comandos NEO)
+- [ ] Setup `neo/sdk/` (Developer SDK)
+
+**Estimativa:** 2-3 dias  
+**Prioridade:** 🔥 CRÍTICA  
+**Dependências:** Nenhuma
+
+**Arquivos a criar:**
+```
+neo/
+├── registry/
+│   ├── index.ts
+│   ├── ipfs-client.ts
+│   └── skill-manager.ts
+├── identity/
+│   ├── mio-system.ts
+│   ├── registry.ts
+│   └── verifier.ts
+├── gateway/
+│   ├── extensions.ts
+│   ├── ipfs-channel.ts
+│   └── web3-signer.ts
+├── cli/
+│   ├── skill-commands.ts
+│   └── identity-commands.ts
+└── sdk/
+    ├── index.ts
+    └── types.ts
+```
+
+---
+
+#### 1.2 🌐 NEO Skills Registry (IPFS)
+
+**Objetivo:** Substituir ClawdHub por registry descentralizado
+
+**Tasks:**
+- [ ] Implementar IPFS client wrapper
+- [ ] Criar skill manifest schema (TypeBox)
+- [ ] Implementar publish/install/search
+- [ ] Migrar 18 skills existentes para IPFS
+- [ ] Pin skills em 3+ nodes
+- [ ] CLI: `neo:skill:publish/install/list`
+
+**Estimativa:** 5-7 dias  
+**Prioridade:** 🔥 CRÍTICA  
+**Dependências:** 1.1
+
+**Milestone:** Primeira skill publicada no IPFS
+
+---
+
+#### 1.3 🔐 mio-system Identity
+
+**Objetivo:** Sistema de identidade Web3 para protocolo NEO
+
+**Tasks:**
+
+- [ ] Implementar MioIdentityManager (ethers.js)
+- [ ] Criar 9 identidades NEO (chaves privadas)
+- [ ] Setup signature verification
+- [ ] Integrar com gateway (auth layer)
+- [ ] CLI: `neo:identity:create/list/verify`
+- [ ] Armazenar identities no IPFS (encrypted)
+
+**Estimativa:** 4-5 dias  
+**Prioridade:** 🔥 CRÍTICA  
+**Dependências:** 1.1
+
+**Milestone:** mio-gateway identity ativa no gateway
+
+---
+
+#### 1.4 🛠️ NEO CLI Commands
+
+**Objetivo:** Interface CLI para operações NEO
+
+**Tasks:**
+
+- [ ] Adicionar comando `neo:info`
+- [ ] Adicionar comando `neo:skill:*`
+- [ ] Adicionar comando `neo:identity:*`
+- [ ] Adicionar comando `neo:ipfs:*`
+- [ ] Adicionar comando `neo:dashboard:*`
+- [ ] Help text e documentação inline
+
+**Estimativa:** 2-3 dias  
+**Prioridade:** ALTA  
+**Dependências:** 1.1, 1.2, 1.3
+
+**Exemplo:**
+```bash
+$ pnpm neobot neo:info
+
+NEO Protocol Stack v1.0.0
+─────────────────────────────────
+Registry:     IPFS (18 skills)
+Identities:   9 mio-system
+Extensions:   ipfs-channel, web3-signer
+Dashboard:    http://localhost:3000
+Autonomy:     60% NEO / 40% Moltbot
+```
+
+---
+
+### 📋 Fase 2: Extensions (Semanas 3-4)
+
+#### 2.1 📡 IPFS Channel Adapter
+
+**Objetivo:** Comunicação via IPFS PubSub
+
+**Tasks:**
+
+- [ ] Implementar IPFSChannelAdapter
+- [ ] Setup IPFS PubSub topics
+- [ ] Roteamento para gateway moltbot
+- [ ] Message encryption (mio-identity)
+- [ ] Testes end-to-end
+
+**Estimativa:** 5-6 dias  
+**Prioridade:** MÉDIA  
+**Dependências:** 1.3
+
+---
+
+#### 2.2 ✍️ Web3 Signature System
+
+**Objetivo:** Assinar mensagens/skills com mio-identity
+
+**Tasks:**
+
+- [ ] Implementar Web3SignerExtension
+- [ ] Sign/verify skills no registry
+- [ ] Sign/verify gateway messages
+- [ ] Audit log (ledger integration)
+
+**Estimativa:** 3-4 dias  
+**Prioridade:** ALTA  
+**Dependências:** 1.3
+
+---
+
+#### 2.3 📱 Dashboard NEO Integration
+
+**Objetivo:** UI para gerenciar NEO Protocol
+
+**Tasks:**
+
+- [ ] Adicionar página "NEO Protocol" no dashboard
+- [ ] Listar skills IPFS
+- [ ] Listar mio-identities
+- [ ] IPFS node status
+- [ ] Publish skill via UI
+- [ ] Identity management UI
+
+**Estimativa:** 4-5 dias  
+**Prioridade:** MÉDIA  
+**Dependências:** 1.2, 1.3
+
+---
+
+### 📋 Fase 3: Documentation (Semanas 5-6)
+
+#### 3.1 📚 NEO Docs Build
+
+**Objetivo:** Documentação self-hosted
+
+**Tasks:**
+
+- [ ] Setup Vitepress (ou similar)
+- [ ] Criar docs-neo/ structure
+- [ ] Escrever protocol docs
+- [ ] Escrever skills docs
+- [ ] Escrever API reference
+- [ ] Build static site
+
+**Estimativa:** 6-8 dias  
+**Prioridade:** MÉDIA
+
+---
+
+#### 3.2 🌍 Deploy IPFS + DNS
+
+**Objetivo:** Hospedar docs no IPFS
+
+**Tasks:**
+
+- [ ] Build docs-neo/
+- [ ] Upload para IPFS
+- [ ] Pin em 3+ nodes
+- [ ] Setup DNS: neo-docs.mellø.eth
+- [ ] CI/CD auto-deploy
+
+**Estimativa:** 2-3 dias  
+**Prioridade:** BAIXA  
+**Dependências:** 3.1
+
+---
+
+### 📋 Fase 4: Testing & Release (Semanas 7-8)
+
+#### 4.1 🧪 End-to-End Testing
+
+**Tasks:**
+
+- [ ] Testes NEO Registry (IPFS)
+- [ ] Testes mio-identity
+- [ ] Testes gateway extensions
+- [ ] Testes CLI commands
+- [ ] Testes dashboard integration
+
+**Estimativa:** 5-6 dias  
+**Prioridade:** ALTA
+
+---
+
+#### 4.2 🔒 Security Audit
+
+**Tasks:**
+
+- [ ] Audit mio-identity (key management)
+- [ ] Audit IPFS registry (signature verification)
+- [ ] Audit gateway extensions (sandboxing)
+- [ ] Penetration testing
+
+**Estimativa:** 4-5 dias  
+**Prioridade:** 🔥 CRÍTICA
+
+---
+
+#### 4.3 🚀 Release NEO Protocol v1.0.0
+
+**Tasks:**
+
+- [ ] Tag version: v1.0.0-neo
+- [ ] Publish NEO SDK (npm)
+- [ ] Announce on channels
+- [ ] Update README principal
+- [ ] Create CHANGELOG_NEO.md
+
+**Estimativa:** 2 dias  
+**Prioridade:** ALTA
+
+---
+
+## 📊 Progress Tracker
+
+### Overall Progress: 0/31 Tasks (0%)
+
+**Por Fase:**
+
+- Fase 1 (Foundation): 0/15 ⬜⬜⬜⬜⬜
+- Fase 2 (Extensions): 0/8  ⬜⬜⬜⬜⬜
+- Fase 3 (Docs):       0/5  ⬜⬜⬜⬜⬜
+- Fase 4 (Release):    0/3  ⬜⬜⬜⬜⬜
+
+**Timeline Estimado:**
+
+- Início: 30 Jan 2026
+- Fase 1: ~2 semanas (até 13 Fev)
+- Fase 2: ~2 semanas (até 27 Fev)
+- Fase 3: ~2 semanas (até 13 Mar)
+- Fase 4: ~2 semanas (até 27 Mar)
+- **Release v1.0.0:** ~27 Março 2026
+
+---
+
+## ✅ COMPLETO - Fase 0.1 (Todas Tarefas Críticas Finalizadas)
 
 ### 1. ✅ Corrigir Comando `moltbot`
 
@@ -54,6 +346,7 @@ pnpm moltbot <comando>
 **Número conectado:** +5562983231110  
 **Plugin:** `extensions/whatsapp/` habilitado  
 **Configuração:**
+
 - `gateway.mode`: local
 - `channels.whatsapp.dmPolicy`: allowlist
 - `channels.whatsapp.allowFrom`: ["+5562983231110"]
@@ -80,6 +373,7 @@ pnpm moltbot <comando>
 - ✅ Error handling completo
 
 **Arquivos criados:**
+
 ```
 skills/telegram/
 ├── SKILL.md (312 linhas)
@@ -98,12 +392,14 @@ skills/telegram/
 ### 4. ✅ Skills Smart Factory Implementadas
 
 #### 4.1 ✅ `deploy.ts` (121 linhas)
+
 ```bash
 pnpm moltbot factory deploy --network base --verify
 pnpm moltbot factory deploy --network ton
 ```
 
 **Funcionalidades:**
+
 - Deploy contratos EVM (Base/Polygon) via Hardhat
 - Deploy TON via `npm run deploy:ton`
 - Verificação automática no Basescan/Polygonscan
@@ -115,11 +411,13 @@ pnpm moltbot factory deploy --network ton
 ---
 
 #### 4.2 ✅ `mint.ts` (152 linhas)
+
 ```bash
 pnpm moltbot factory mint --network base --amount 1000000 --to 0x...
 ```
 
 **Funcionalidades:**
+
 - Mint de tokens $NEOFLW (EVM e TON)
 - Validação de endereços e valores
 - Execução via Hardhat scripts
@@ -131,6 +429,7 @@ pnpm moltbot factory mint --network base --amount 1000000 --to 0x...
 ---
 
 #### 4.3 ✅ `bridge.ts` (202 linhas)
+
 ```bash
 pnpm moltbot factory bridge --from base --to polygon --amount 10000 --recipient 0x...
 ```
