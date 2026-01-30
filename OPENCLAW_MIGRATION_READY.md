@@ -38,9 +38,11 @@
 - ✅ Instruções de rollback
 
 ### 2. Documento de Auditoria Completo
+
 📄 `AUDIT_LINKS_OPENCLAW.md`
 
 **Conteúdo:**
+
 - Análise de impacto completa
 - Categorização por prioridade (P0/P1/P2)
 - Checklist de validação
