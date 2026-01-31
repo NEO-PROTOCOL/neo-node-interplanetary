@@ -158,7 +158,7 @@ A Woovi também envia webhooks **sem** prefixo "Bearer":
 ```javascript
 // Webhook recebido da Woovi
 headers: {
-  'Authorization': 'floCRm...',  // SEM "Bearer"
+  'Authorization': 'your_webhook_secret_XXXXX',  // SEM "Bearer"
   'Content-Type': 'application/json'
 }
 
@@ -203,9 +203,9 @@ FLOWPAY_API_URL=https://flowpay-production-10d8.up.railway.app
 
 ```bash
 # Backend Railway precisa destas 3 variáveis
-WOOVI_API_KEY=Q2xpZW50X0lkXzk2MDRkYTJmLTQ0N2EtNGJjMi1iNjYxLWQwNzBlOGNjNWVkZTpDbGllbnRfU2VjcmV0X0g5M3ZsbEsrTjNvSWJ0bEFkVWJ1T0hDbExUano5WWRiNmpTNHlORzVsaU09
+WOOVI_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==
 
-WOOVI_WEBHOOK_SECRET=floCRm...  # Sem prefixo openpix_
+WOOVI_WEBHOOK_SECRET=your_webhook_secret_XXXXX  # Sem prefixo openpix_
 
 TOKEN_SECRET=6efddab08745069cd6157087ef8a3b01c6343dd3da7754b311180045b8855423...
 ```

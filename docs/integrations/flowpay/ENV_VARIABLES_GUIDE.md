@@ -37,9 +37,9 @@ FLOWPAY_API_URL=https://flowpay-production-10d8.up.railway.app
 
 ```bash
 # Chave de autenticação da Woovi
-FLOWPAY_API_KEY=Q2xp...
-OPENPIX_API_KEY=Q2xp...  # Legacy fallback
-WOOVI_API_KEY=Q2xp...    # Documentação
+FLOWPAY_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==
+OPENPIX_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==  # Legacy fallback
+WOOVI_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==    # Documentação
 
 # Use a MESMA chave para todos (compatibilidade)
 ```
@@ -63,7 +63,7 @@ WOOVI_API_KEY=Q2xp...    # Documentação
 
 ```bash
 # Secret para assinar JWT tokens de desbloqueio
-TOKEN_SECRET=RT5rp...
+TOKEN_SECRET=your_random_secret_min_64_chars_XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 
 ```
 
@@ -166,14 +166,14 @@ WEB3AUTH_CLIENT_ID=BPr...
 FLOWPAY_API_URL=https://flowpay-production-10d8.up.railway.app
 
 # Woovi/OpenPix Keys (use mesma chave)
-FLOWPAY_API_KEY=Q2xpZW50X0lkXzk2MDRkYTJmLTQ0N2EtNGJjMi1iNjYxLWQwNzBlOGNjNWVkZTpDbGllbnRfU2VjcmV0X0g5M3ZsbEsrTjNvSWJ0bEFkVWJ1T0hDbExUano5WWRiNmpTNHlORzVsaU09
-OPENPIX_API_KEY=Q2xpZW50X0lkXzk2MDRkYTJmLTQ0N2EtNGJjMi1iNjYxLWQwNzBlOGNjNWVkZTpDbGllbnRfU2VjcmV0X0g5M3ZsbEsrTjNvSWJ0bEFkVWJ1T0hDbExUano5WWRiNmpTNHlORzVsaU09
-WOOVI_API_KEY=Q2xpZW50X0lkXzk2MDRkYTJmLTQ0N2EtNGJjMi1iNjYxLWQwNzBlOGNjNWVkZTpDbGllbnRfU2VjcmV0X0g5M3ZsbEsrTjNvSWJ0bEFkVWJ1T0hDbExUano5WWRiNmpTNHlORzVsaU09
+FLOWPAY_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==
+OPENPIX_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==
+WOOVI_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==
 
 # Secrets (use mesmo valor)
 FLOWPAY_JWT_SECRET=neo-protocol-secret-change-me-production
-FLOWPAY_SIGNATURE_SECRET=openpix_o2jGDXpNroajMCRm/uSS7UUD9vES4HiDpFgj36R75sA=
-WOOVI_WEBHOOK_SECRET=openpix_o2jGDXpNroajMCRm/uSS7UUD9vES4HiDpFgj36R75sA=
+FLOWPAY_SIGNATURE_SECRET=openpix_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
+WOOVI_WEBHOOK_SECRET=openpix_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 WOOVI_API_URL=https://api.woovi.com
 
 # Cripto (Opcional - apenas se usar pagamentos em USDC/Token)
@@ -189,8 +189,8 @@ WOOVI_API_URL=https://api.woovi.com
 ```bash
 # No Railway Dashboard → FlowPay → Variables
 
-WOOVI_API_KEY=Q2xpZW50X0lkXzk2MDRkYTJmLTQ0N2EtNGJjMi1iNjYxLWQwNzBlOGNjNWVkZTpDbGllbnRfU2VjcmV0X0g5M3ZsbEsrTjNvSWJ0bEFkVWJ1T0hDbExUano5WWRiNmpTNHlORzVsaU09
-WOOVI_WEBHOOK_SECRET=openpix_o2jGDXpNroajMCRm/uSS7UUD9vES4HiDpFgj36R75sA=
+WOOVI_API_KEY=Q2xpZW50X0lkX1hYWFhYWFhYOnNlY3JldF9YWFhYWFhYWA==
+WOOVI_WEBHOOK_SECRET=openpix_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 JWT_SECRET=neo-protocol-secret-change-me-production
 
 # Se usar cripto:

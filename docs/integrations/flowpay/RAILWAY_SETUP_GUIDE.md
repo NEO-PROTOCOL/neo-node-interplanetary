@@ -99,7 +99,7 @@ Projeto → Settings → Environment
 │                                                 │
 │  Variable Value:                                │
 │  ┌───────────────────────────────────────────┐ │
-│  │ openpix_o2jGDXpNroajMCRm/uSS7UUD9vES4Hi │ │
+│  │ openpix_XXXXXXXXXXXXXXXXXXXXXXXXXXXXX │ │
 │  │ DpFgj36R75sA=                             │ │
 │  └───────────────────────────────────────────┘ │
 │                                                 │

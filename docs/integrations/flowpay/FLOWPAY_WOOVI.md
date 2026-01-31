@@ -19,7 +19,7 @@ de nome fantasia em nosso projeto como FlowPay.
 | Variável | Descrição | Formato | Exemplo |
 |:---------|:----------|:--------|:--------|
 | `WOOVI_API_KEY` | Chave AppID | String codificada | `Q2xp...` |
-| `WOOVI_WEBHOOK_SECRET` | Senha webhook | String | `floCRm...` |
+| `WOOVI_WEBHOOK_SECRET` | Senha webhook | String | `openpix_XXXXX` |
 | `WOOVI_API_URL` | Endpoint base | URL HTTPS | `https://api.woovi.com` |
 
 ---
