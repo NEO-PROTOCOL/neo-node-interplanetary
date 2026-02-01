@@ -105,7 +105,7 @@ for our Skills Registry and content.
 - Gateway Extensions (IPFS PubSub, Nostr, Web3 Signer)
 - Moltbot Core (stable): channels, agent runtime, security, Ledger
 
-Setup e comandos: ver [SETUP.md](SETUP.md).
+Setup e comandos: ver [**Guia de Início Rápido**](docs/core/QUICKSTART.md).
 
 ```text
 ========================================================================
@@ -129,109 +129,94 @@ integration, NFT-based skills, DAO governance. Phase 1 in progress.
 
 ```mermaid
 graph TB
-    subgraph NEOBOT["NEOBOT - OpenClaw Fork - Orchestrator"]
+    subgraph NEOBOT["🎯 NEOBOT (Protocol Center)"]
         CORE[Core: Gateway + Routing + Sessions]
-        SKILLS[NEO Skills Manager]
-        CLI[CLI Interface]
-        LEDGER[Ledger/Audit Trail]
+        SKILLS[NEO Skills Registry - IPFS]
+        CLI[CLI: neobot command]
+        ID[mio-system Identity]
     end
 
-    subgraph ACTIVE_SKILLS["Active Skills - Managed by NEO Skills Manager"]
-        FC_SKILL[FlowCloser Skills]
+    subgraph ACTIVE_SKILLS["✅ SKILLS ATIVAS"]
+        FC_SKILL[FlowCloser Orchestrator]
         NOTION_SKILL[Notion Integration]
-        WA_SKILL[WhatsApp Bot]
-        TG_SKILL[Telegram Bot]
+        WA_SKILL[WhatsApp Channel]
+        TG_SKILL[Telegram Channel]
+        FACTORY[Smart Factory Skill]
+        PAY[FlowPay Skill]
     end
 
-    subgraph FLOWCLOSER["FLOWCLOSER - Lead Qualification System"]
+    subgraph CLOUD_INFRA["☁️ PROVEDORES & INFRA"]
+        ANTHROPIC[Anthropic: Claude 3.5 Sonnet]
+        IPFS_NODE[Local/Remote IPFS Node]
+        LIGHTHOUSE[Lighthouse Pinning]
+        RAILWAY[Railway: Agent Deployment]
+    end
+
+    subgraph FLOWCLOSER["🟢 FLOWCLOSER - Lead Qualification"]
         FC_AGENT[FlowCloser Agent]
         FC_INSTA[Instagram DM]
         FC_WA[WhatsApp API]
-        FC_DB[SQLite + IPFS Storage]
     end
 
-    subgraph REVENUE_CRITICAL["Revenue Critical - Generates Revenue"]
-        FLOWPAY[FlowPay: PIX to Crypto Gateway]
-        FLOWOFF[FlowOFF Agency: Client Acquisition]
-        FACTORY[Smart Factory: Tokenization FaaS]
+    subgraph REVENUE_NODES["💰 REVENUE NODES"]
+        FLOWPAY[FlowPay: Gateway PIX]
+        FLOWOFF[FlowOFF: Agency Leads]
     end
 
-    subgraph PRODUCTS["Monetizable Products"]
-        WOD[WOD X PRO: Fitness + Blockchain]
-        FLUXX[FLUXX DAO: Governance Platform]
-    end
-
-    subgraph BACKEND_FUTURE["Future - Sovereign Backend"]
-        AGENT_FULL[AGENT-FULL: Sovereign Entity]
+    subgraph FUTURE["🔮 SOVEREIGN FUTURE"]
         KWIL[Kwil DB: Decentralized Memory]
-        IPFS_STORE[IPFS/Storacha Storage]
+        STORAGE[Storacha / Ceramic]
     end
 
-    subgraph PRODUCTIVITY["Mental Organization"]
-        NOTION[Notion: Idea Capture]
-        CONTENT[Content Machine Local]
-    end
+    %% Conexões Ativas (Sólidas)
+    CORE --- SKILLS
+    CORE --- CLI
+    CORE --- ID
+    
+    SKILLS --- FC_SKILL
+    SKILLS --- TG_SKILL
+    SKILLS --- PAY
+    SKILLS --- FACTORY
 
-    %% Main Flow
-    CORE --> SKILLS
-    SKILLS --> ACTIVE_SKILLS
+    CORE --> ANTHROPIC
+    SKILLS --> IPFS_NODE
+    SKILLS --> LIGHTHOUSE
     
-    %% FlowCloser connects to Neobot via Skills
-    FC_SKILL -.->|HTTP API| FLOWCLOSER
-    FC_INSTA --> FC_AGENT
-    FC_WA --> FC_AGENT
-    FC_AGENT --> FC_DB
+    FC_SKILL -.->|Orchestration| RAILWAY
+    RAILWAY --- FC_AGENT
+    FC_AGENT --- FC_INSTA
+    FC_AGENT --- FC_WA
+
+    PAY -.->|Triggers| FLOWPAY
     
-    %% Revenue Flow - The Loop
-    FLOWOFF -->|Qualified Leads| FLOWCLOSER
-    FLOWCLOSER -->|Lead to Client| FLOWOFF
-    FLOWOFF -->|Client Payment| FLOWPAY
-    FLOWPAY -->|Unlock Access| FACTORY
-    FLOWPAY -->|Unlock Access| WOD
-    FLOWPAY -->|Unlock Access| FLUXX
+    %% Fluxo de Receita (The Loop)
+    FLOWOFF -->|Leads| FC_AGENT
+    FC_AGENT -->|Qualified| FLOWOFF
+    FLOWOFF -->|Payments| FLOWPAY
     
-    %% Factory creates tokens for products
-    FACTORY -->|Create Contracts| WOD
-    FACTORY -->|Create Contracts| FLUXX
+    %% Status Visual
+    classDef connected fill:#44ff44,stroke:#00aa00,stroke-width:2px,color:#000
+    classDef warning fill:#ffcc00,stroke:#aa8800,stroke-width:2px,color:#000
+    classDef future fill:#8888ff,stroke:#0000ff,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
+    classDef active_node fill:#00ffcc,stroke:#00aba9,stroke-width:3px,color:#000
     
-    %% Productivity
-    NOTION_SKILL -.->|Organize| NOTION
-    NOTION -->|Structured Plan| FLOWOFF
-    
-    %% Active skills connect channels
-    WA_SKILL -.-> FC_WA
-    TG_SKILL -.-> TG_BOT[Telegram Bot]
-    
-    %% Future backend - not priority now
-    AGENT_FULL -.->|Future Memory| KWIL
-    AGENT_FULL -.->|Future Storage| IPFS_STORE
-    
-    %% Ledger records everything
-    ACTIVE_SKILLS --> LEDGER
-    
-    classDef critical fill:#dc2626,stroke:#991b1b,stroke-width:3px,color:#fff
-    classDef active fill:#16a34a,stroke:#15803d,stroke-width:2px,color:#fff
-    classDef revenue fill:#ea580c,stroke:#c2410c,stroke-width:3px,color:#fff
-    classDef future fill:#2563eb,stroke:#1e40af,stroke-width:2px,color:#fff,stroke-dasharray: 5 5
-    classDef productivity fill:#9333ea,stroke:#7e22ce,stroke-width:2px,color:#fff
-    
-    class CORE critical
-    class ACTIVE_SKILLS,FLOWCLOSER active
-    class FLOWPAY,FLOWOFF,FACTORY revenue
-    class AGENT_FULL,KWIL,IPFS_STORE future
-    class NOTION,CONTENT productivity
+    class CORE,CLI,ID,SKILLS,TG_SKILL,ANTHROPIC,IPFS_NODE,LIGHTHOUSE connected
+    class FC_SKILL,WA_SKILL,FACTORY,PAY,NOTION_SKILL warning
+    class KWIL,STORAGE future
+    class FC_AGENT,FLOWPAY active_node
 ```
 
 ```text
 ========================================================================
-                         DOCUMENTATION
+                          DOCUMENTATION
 ========================================================================
 ```
 
-- **[SETUP.md](SETUP.md)** — Clone, install, comandos, contribuir
-- **[ARCHITECTURE_NEO_PROTOCOL.md](ARCHITECTURE_NEO_PROTOCOL.md)** — Arquitetura completa
-- **[NEXT_STEPS_V2.md](NEXT_STEPS_V2.md)** — Roadmap 8 semanas
-- **[markdown-neo](.cursor/standards/markdown-neo.md)** — Padrão de escrita para docs
+- **[REPOSITÓRIO DE DOCS (ÍNDICE)](docs/INDEX.md)** — Navegação centralizada
+- **[SETUP.md](docs/core/SETUP.md)** — Instalação e comandos
+- **[ARCHITECTURE_NEO_PROTOCOL.md](docs/core/ARCHITECTURE_NEO_PROTOCOL.md)** — Arquitetura completa
+- **[NEXT_STEPS_V2.md](docs/core/NEXT_STEPS_V2.md)** — Roadmap 8 semanas
+- **[ARCHITECTURE_VISUAL.md](docs/neo-protocol/ARCHITECTURE_VISUAL.md)** — Status visual das conexões
 
 Upstream: <https://docs.molt.bot>
 
@@ -245,11 +230,11 @@ Upstream: <https://docs.molt.bot>
 - Email: neo@neoprotocol.space | Site: neoprotocol.space (em breve)
 
 Roadmap: Phase 1.0 IN PROGRESS (Foundation, Extensions, Docs, Release
-v1.0.0). Detalhes em [NEXT_STEPS_V2.md](NEXT_STEPS_V2.md).
+v1.0.0). Detalhes em [NEXT_STEPS_V2.md](docs/core/NEXT_STEPS_V2.md).
 
 ```text
 ========================================================================
-                         LICENSE & DISCLAIMER
+                          LICENSE & DISCLAIMER
 ========================================================================
 ```
 
@@ -266,8 +251,8 @@ until v1.0.0.
 ========================================================================
 ```
 
-Star the repo · Read [SETUP.md](SETUP.md) to run locally · Check
-[ARCHITECTURE_NEO_PROTOCOL.md](ARCHITECTURE_NEO_PROTOCOL.md) · Join
+Star the repo · Read [INDEX.md](docs/INDEX.md) · Check
+[ARCHITECTURE_VISUAL.md](docs/neo-protocol/ARCHITECTURE_VISUAL.md) · Join
 community for updates.
 
 ```
