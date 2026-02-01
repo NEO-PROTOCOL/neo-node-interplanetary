@@ -38,18 +38,22 @@ export async function skillInstallCommand(
   console.log("");
 
   try {
-    const skill = await registry.install(skillSpec, targetPath);
+    const installPath = await registry.install(skillSpec, targetPath);
+
+    // Read manifest after install to get details
+    const manifestPath = path.join(installPath, 'skill.json');
+    const manifestContent = await import('fs/promises').then(fs => fs.readFile(manifestPath, 'utf-8'));
+    const skill = JSON.parse(manifestContent);
 
     console.log("");
     console.log("✅ Skill installed successfully!");
-    console.log(`   ID:      ${skill.id}`);
+    console.log(`   Name:    ${skill.name}`);
     console.log(`   Version: ${skill.version}`);
     console.log(`   Author:  ${skill.author}`);
-    console.log(`   Path:    ${targetPath}`);
+    console.log(`   Path:    ${installPath}`);
     console.log("");
     console.log("📋 Next steps:");
-    console.log(`   - View README: cat ${path.join(targetPath, skill.files.readme)}`);
-    console.log(`   - Run skill:   pnpm tsx ${path.join(targetPath, skill.files.main)}`);
+    console.log(`   - View skill: cd ${installPath}`);
     console.log("");
   } catch (error: any) {
     console.error("");

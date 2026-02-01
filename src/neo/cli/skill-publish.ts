@@ -86,18 +86,7 @@ export async function skillPublishCommand(skillPath: string): Promise<void> {
   console.log("");
 
   try {
-    const cid = await registry.publish(
-      {
-        id: skillJSON.id,
-        name: skillJSON.name,
-        version: skillJSON.version,
-        author: skillJSON.author,
-        category: skillJSON.category,
-        metadata: skillJSON.metadata,
-        files: skillJSON.files,
-      },
-      skillPath,
-    );
+    const { cid } = await registry.publish(skillPath);
 
     const lighthouseConfigured = !!process.env.LIGHTHOUSE_API_KEY;
     const pinataGateway = process.env.PINATA_GATEWAY_URL;

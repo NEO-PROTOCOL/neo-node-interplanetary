@@ -62,13 +62,13 @@ export const NEO_PROTOCOL_INFO = {
 /**
  * Helper: Cria cliente NEO completo
  */
-export async function createNeoClient(options?: { ipfsEndpoint?: string; privateKey?: string }) {
+export async function createNeoClient(options?: { ipfsApiUrl?: string; privateKey?: string }) {
   const { createNeoSkillsRegistry } = await import("../registry/index.js");
   const { createMioIdentityManager } = await import("../identity/mio-system.js");
 
   return {
     registry: createNeoSkillsRegistry({
-      ipfsEndpoint: options?.ipfsEndpoint,
+      ipfsApiUrl: options?.ipfsApiUrl,
     }),
 
     identity: options?.privateKey ? createMioIdentityManager(options.privateKey) : null,

@@ -713,7 +713,8 @@ Economia estimada: ~40-60% vs usar apenas Sonnet
 
     } catch (error) {
       console.error("Admin Chat Error:", error);
-      return `❌ Erro no Admin Console: ${error.message}`;
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      return `❌ Erro no Admin Console: ${errorMessage}`;
     }
   }
 }
