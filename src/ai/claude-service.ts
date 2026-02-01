@@ -650,7 +650,7 @@ Economia estimada: ~40-60% vs usar apenas Sonnet
   async chatWithAdminTools(
     userId: string,
     message: string,
-    contextFetcher: () => Promise<string>
+    contextFetcher: () => Promise<string>,
   ): Promise<string> {
     const model = "claude-3-5-sonnet-20241022";
 
@@ -662,14 +662,14 @@ Economia estimada: ~40-60% vs usar apenas Sonnet
         input_schema: {
           type: "object",
           properties: {
-            lines: { type: "number", description: "Number of lines (default 50)" }
-          }
-        }
+            lines: { type: "number", description: "Number of lines (default 50)" },
+          },
+        },
       },
       {
         name: "check_system_status",
         description: "Check status of critical systems (IPFS, Scheduler, Database).",
-        input_schema: { type: "object", properties: {} }
+        input_schema: { type: "object", properties: {} },
       },
       {
         name: "restart_service",
@@ -677,11 +677,11 @@ Economia estimada: ~40-60% vs usar apenas Sonnet
         input_schema: {
           type: "object",
           properties: {
-            service: { type: "string", enum: ["dashboard", "ipfs", "automations"] }
+            service: { type: "string", enum: ["dashboard", "ipfs", "automations"] },
           },
-          required: ["service"]
-        }
-      }
+          required: ["service"],
+        },
+      },
     ];
 
     try {
@@ -692,8 +692,11 @@ Economia estimada: ~40-60% vs usar apenas Sonnet
         max_tokens: 4096,
         tools: tools,
         messages: [
-          { role: "user", content: `CONTEXTO DO SISTEMA:\n${systemContext}\n\nUSUÁRIO: ${message}` }
-        ]
+          {
+            role: "user",
+            content: `CONTEXTO DO SISTEMA:\n${systemContext}\n\nUSUÁRIO: ${message}`,
+          },
+        ],
       });
 
       const content = response.content[0];
@@ -703,14 +706,13 @@ Economia estimada: ~40-60% vs usar apenas Sonnet
       }
 
       // TypeScript (e a API v2) diz que tool_use pode estar em qualquer bloco
-      const toolUse = response.content.find(c => c.type === "tool_use") as any;
+      const toolUse = response.content.find((c) => c.type === "tool_use") as any;
 
       if (toolUse) {
         return `[EXECUTING COMMAND] 🛠️ ${toolUse.name} (${JSON.stringify(toolUse.input)}) \nAguardando implementação da execução real no backend... (Para Phase 2 completa)`;
       }
 
       return "Comando recebido, mas nenhuma ação tomada.";
-
     } catch (error) {
       console.error("Admin Chat Error:", error);
       const errorMessage = error instanceof Error ? error.message : String(error);

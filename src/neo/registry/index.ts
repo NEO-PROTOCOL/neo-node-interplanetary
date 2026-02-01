@@ -40,7 +40,10 @@ export class NeoSkillsRegistry {
   /**
    * Publish a skill directory to IPFS
    */
-  async publish(skillDir: string, signer?: any): Promise<{ cid: string; manifest: SkillManifest }> {
+  async publish(
+    skillDir: string,
+    _signer?: any,
+  ): Promise<{ cid: string; manifest: SkillManifest }> {
     console.log(`\n📦 Publishing skill from: ${skillDir}...`);
 
     // 1. Validate Manifest

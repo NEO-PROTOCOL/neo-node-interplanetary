@@ -29,11 +29,12 @@ export async function skillListCommand(options?: { search?: string }): Promise<v
       const query = options.search.toLowerCase();
       console.log(`🔍 Searching for: "${options.search}"`);
       console.log("");
-      skills = rawSkills.filter(s =>
-        s.id.toLowerCase().includes(query) ||
-        s.name.toLowerCase().includes(query) ||
-        s.description.toLowerCase().includes(query) ||
-        (s.category && s.category.toLowerCase().includes(query))
+      skills = rawSkills.filter(
+        (s) =>
+          s.id.toLowerCase().includes(query) ||
+          s.name.toLowerCase().includes(query) ||
+          s.description.toLowerCase().includes(query) ||
+          (s.category && s.category.toLowerCase().includes(query)),
       );
     } else {
       console.log("📦 All Skills:");
@@ -59,7 +60,7 @@ export async function skillListCommand(options?: { search?: string }): Promise<v
       const id = skill.id.padEnd(19);
       const version = skill.version.padEnd(7);
       const author = skill.author.padEnd(12);
-      const category = (skill.category || 'misc').padEnd(18);
+      const category = (skill.category || "misc").padEnd(18);
 
       console.log(`│ ${id} │ ${version} │ ${author} │ ${category} │`);
     }
