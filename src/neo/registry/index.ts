@@ -1,9 +1,8 @@
-
-import { create as createIpfsClient } from 'kubo-rpc-client';
-import { readFile, writeFile, mkdir } from 'fs/promises';
-import path from 'path';
-import { glob } from 'glob';
-import fs from 'fs';
+import { create as createIpfsClient } from "kubo-rpc-client";
+import { readFile, writeFile, mkdir } from "fs/promises";
+import path from "path";
+import { glob } from "glob";
+import fs from "fs";
 
 // Types
 export interface SkillManifest {
@@ -29,14 +28,13 @@ export interface NeoSkillsIndex {
   skills: Record<string, { latest: string; versions: Record<string, string> }>;
 }
 
-
 export class NeoSkillsRegistry {
   private ipfs;
   private config: NeoRegistryConfig;
 
   constructor(config: NeoRegistryConfig = {}) {
     this.config = config;
-    this.ipfs = createIpfsClient({ url: config.ipfsApiUrl || 'http://127.0.0.1:5001' });
+    this.ipfs = createIpfsClient({ url: config.ipfsApiUrl || "http://127.0.0.1:5001" });
   }
 
   /**
@@ -46,24 +44,28 @@ export class NeoSkillsRegistry {
     console.log(`\n📦 Publishing skill from: ${skillDir}...`);
 
     // 1. Validate Manifest
-    const manifestPath = path.join(skillDir, 'skill.json');
+    const manifestPath = path.join(skillDir, "skill.json");
     if (!fs.existsSync(manifestPath)) {
       throw new Error(`Missing skill.json in ${skillDir}`);
     }
 
-    const manifestContent = await readFile(manifestPath, 'utf-8');
+    const manifestContent = await readFile(manifestPath, "utf-8");
     const manifest: SkillManifest = JSON.parse(manifestContent);
 
     // 2. Add files to IPFS
     // We use glob to find all files recursively
-    const files = await glob('**/*', { cwd: skillDir, nodir: true, ignore: ['node_modules/**', '.git/**'] });
+    const files = await glob("**/*", {
+      cwd: skillDir,
+      nodir: true,
+      ignore: ["node_modules/**", ".git/**"],
+    });
 
     const ipfsInput = [];
     for (const file of files) {
       const content = await readFile(path.join(skillDir, file));
       ipfsInput.push({
         path: file, // Relative path preserves structure
-        content: content
+        content: content,
       });
     }
 
@@ -71,10 +73,10 @@ export class NeoSkillsRegistry {
 
     // 3. Upload Directory
     // 'wrapWithDirectory: true' creates a folder with the hash
-    let rootCid = '';
+    let rootCid = "";
     for await (const result of this.ipfs.addAll(ipfsInput, { wrapWithDirectory: true })) {
       // The last result with empty path is the root directory
-      if (result.path === '') {
+      if (result.path === "") {
         rootCid = result.cid.toString();
       }
     }
@@ -94,7 +96,7 @@ export class NeoSkillsRegistry {
    * Install/Download a skill from IPFS by CID
    */
   async install(cid: string, alias?: string): Promise<string> {
-    const targetDir = this.config.localSkillsDir || './skills';
+    const targetDir = this.config.localSkillsDir || "./skills";
     console.log(`\n📥 Installing skill ${cid}...`);
 
     // Create temp or final directory
@@ -104,7 +106,7 @@ export class NeoSkillsRegistry {
 
     await mkdir(installPath, { recursive: true });
 
-    // IPFS Get 
+    // IPFS Get
     // This is a simplified version. For real robust implementation we need to handle recursive structures.
     // For now we assume a flat-ish structure or use 'get' command.
 
@@ -114,15 +116,15 @@ export class NeoSkillsRegistry {
       const f = file as any;
       // f.path includes the CID prefix, we want to strip it relative to installPath
       // e.g. QmHash/index.js -> index.js
-      const relativePath = f.path.replace(new RegExp(`^${cid}/?`), '');
+      const relativePath = f.path.replace(new RegExp(`^${cid}/?`), "");
 
       if (!relativePath) continue; // Skip root folder itself if it matches
 
       const fullPath = path.join(installPath, relativePath);
 
-      if (f.type === 'dir') {
+      if (f.type === "dir") {
         await mkdir(fullPath, { recursive: true });
-      } else if (f.type === 'file') {
+      } else if (f.type === "file") {
         // Collect content
         const chunks = [];
         // @ts-ignore - kubo-rpc-client types are tricky
@@ -161,14 +163,14 @@ export class NeoSkillsRegistry {
       skillsMap[skill.name] = {
         latest: skill.version,
         versions: {
-          [skill.version]: skill.cid || 'local-dev'
-        }
+          [skill.version]: skill.cid || "local-dev",
+        },
       };
     }
 
     return {
       updatedAt: new Date().toISOString(),
-      skills: skillsMap
+      skills: skillsMap,
     };
   }
 
@@ -177,10 +179,28 @@ export class NeoSkillsRegistry {
   }
 
   /**
+   * Create a new empty index on IPFS
+   */
+  async createIndex(): Promise<string> {
+    const emptyIndex: NeoSkillsIndex = {
+      updatedAt: new Date().toISOString(),
+      skills: {},
+    };
+
+    const content = JSON.stringify(emptyIndex, null, 2);
+    const result = await this.ipfs.add({
+      path: "index.json",
+      content: content,
+    });
+
+    return result.cid.toString();
+  }
+
+  /**
    * List installed skills by scanning local ./skills directory
    */
-  async list(): Promise<(SkillManifest & { id: string, cid: string, category: string })[]> {
-    const skillsDir = this.config.localSkillsDir || './skills';
+  async list(): Promise<(SkillManifest & { id: string; cid: string; category: string })[]> {
+    const skillsDir = this.config.localSkillsDir || "./skills";
     const results = [];
 
     try {
@@ -191,16 +211,16 @@ export class NeoSkillsRegistry {
 
       for (const entry of entries) {
         if (entry.isDirectory()) {
-          const manifestPath = path.join(skillsDir, entry.name, 'skill.json');
+          const manifestPath = path.join(skillsDir, entry.name, "skill.json");
           if (fs.existsSync(manifestPath)) {
             try {
-              const content = await readFile(manifestPath, 'utf-8');
+              const content = await readFile(manifestPath, "utf-8");
               const manifest = JSON.parse(content);
               results.push({
                 ...manifest,
                 id: entry.name, // Folder name acts as ID locally
-                cid: manifest.cid || 'local',
-                category: manifest.category || 'uncategorized'
+                cid: manifest.cid || "local",
+                category: manifest.category || "uncategorized",
               });
             } catch (e) {
               console.warn(`Failed to parse ${manifestPath}`, e);
