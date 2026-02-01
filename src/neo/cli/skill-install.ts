@@ -41,8 +41,10 @@ export async function skillInstallCommand(
     const installPath = await registry.install(skillSpec, targetPath);
 
     // Read manifest after install to get details
-    const manifestPath = path.join(installPath, 'skill.json');
-    const manifestContent = await import('fs/promises').then(fs => fs.readFile(manifestPath, 'utf-8'));
+    const manifestPath = path.join(installPath, "skill.json");
+    const manifestContent = await import("fs/promises").then((fs) =>
+      fs.readFile(manifestPath, "utf-8"),
+    );
     const skill = JSON.parse(manifestContent);
 
     console.log("");
