@@ -11,7 +11,7 @@ if [ -z "$BW_SESSION" ]; then
     echo "❌ BW_SESSION não definida"
     echo ""
     echo "Execute primeiro:"
-    echo "export BW_SESSION=\"sua-session-key-aqui\""
+    echo "export BW_SESSION=\$(bw unlock --raw)"
     echo ""
     exit 1
 fi
@@ -54,25 +54,32 @@ while IFS='=' read -r key value || [ -n "$key" ]; do
     
     echo "  📝 Migrando: $key"
     
-    # Create as secure note
-    if bw get item "$key" --session "$BW_SESSION" &>/dev/null; then
+    # Check if exists
+    SEARCH=$(bw list items --search "$key" --session "$BW_SESSION" | grep "\"name\": \"$key\"") || true
+    if [ -n "$SEARCH" ]; then
         echo "     ⚠️  Já existe, pulando..."
         SKIPPED=$((SKIPPED + 1))
     else
-        # Create secure note with the secret (needs base64 encoding)
+        # Create secure note JSON
+        # We use a secure note (type 2)
+        # Note: We need to escape double quotes in the value for JSON
+        ESCAPED_VALUE=$(echo "$value" | sed 's/"/\\"/g')
+        
         JSON=$(cat <<EOF
 {
   "type": 2,
   "name": "$key",
-  "notes": "$value",
+  "notes": "$ESCAPED_VALUE",
   "secureNote": {
     "type": 0
   }
 }
 EOF
 )
-        ENCODED=$(echo "$JSON" | base64)
-        bw create item "$ENCODED" --session "$BW_SESSION" &>/dev/null
+        # Encode and Create
+        ENCODED=$(echo "$JSON" | bw encode)
+        bw create item "$ENCODED" --session "$BW_SESSION" > /dev/null
+        
         if [ $? -eq 0 ]; then
             echo "     ✅ Criado!"
             MIGRATED=$((MIGRATED + 1))
@@ -94,24 +101,6 @@ echo ""
 
 # Sync
 echo "📡 Sincronizando com servidor..."
-bw sync --session "$BW_SESSION" &>/dev/null
+bw sync --session "$BW_SESSION" > /dev/null
 echo "✅ Sincronizado!"
-echo ""
-
-echo "═══════════════════════════════════════"
-echo "Próximos passos:"
-echo ""
-echo "1. Testar recuperação:"
-echo "   source scripts/load-secrets-bitwarden.sh"
-echo ""
-echo "2. Verificar variáveis:"
-echo "   env | grep -E 'ANTHROPIC|TELEGRAM|NEO_'"
-echo ""
-echo "3. Testar gateway:"
-echo "   pnpm moltbot gateway"
-echo ""
-echo "4. Se tudo OK, backup e delete .env:"
-echo "   mv .env .env.backup"
-echo "   # Teste tudo novamente"
-echo "   rm .env.backup"
 echo ""

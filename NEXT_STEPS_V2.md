@@ -25,7 +25,8 @@ construida sobre o Moltbot Core, seguindo principios Web3.
 
 **Status Atual:**
 - Fase 0.1: COMPLETA (18 skills, 9 identities, WhatsApp+TG)
-- Fase 1.0: INICIANDO (Foundation Architecture)
+- Fase 1.0: COMPLETA (Foundation Architecture: IPFS, CLI, Keys)
+- Fase 2.0: INICIANDO (Dashboard & Extensions)
 ```
 --------------------------------------------------------------
 COMPONENTES NEO LAYER
@@ -316,7 +317,7 @@ COMPONENTES NEO LAYER
 
 **Objetivo:** Implementar registry descentralizado
 
-**Status:** [#---] PENDENTE
+**Status:** [####] COMPLETO
 
 **Tasks:**
 
@@ -365,7 +366,7 @@ COMPONENTES NEO LAYER
 
 **Objetivo:** Ativar sistema de identidade Web3
 
-**Status:** [#---] PENDENTE
+**Status:** [####] COMPLETO
 
 **Tasks:**
 
@@ -413,7 +414,7 @@ COMPONENTES NEO LAYER
 
 **Objetivo:** Interface CLI para operacoes NEO
 
-**Status:** [#---] PENDENTE
+**Status:** [####] COMPLETO
 
 **Tasks:**
 

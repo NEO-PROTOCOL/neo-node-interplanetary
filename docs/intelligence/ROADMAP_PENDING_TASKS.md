@@ -408,9 +408,9 @@ own AI stack. Zero dependências externas.
 ```
 
 **Total estimado:** 
-- Q1 2026 (FlowPay + Smart Factory): 
+- Q1 2026 (FlowPay + Smart Factory):
   7-10 dias
-- Q2 2026 (Neo One + CEO analysis): 
+- Q2 2026 (Neo One + CEO analysis):
   5-8 dias
 - Q3 2026 (integrations): 6-9 dias
 

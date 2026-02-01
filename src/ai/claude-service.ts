@@ -643,6 +643,79 @@ ${stats.savingsPercentage > 0 ? `\n🎉 Você está economizando ${stats.savings
 Economia estimada: ~40-60% vs usar apenas Sonnet
     `.trim();
   }
+
+  /**
+   * 👮 NΞØ ADMIN CONSOLE - Tool Calling Enabled Chat
+   */
+  async chatWithAdminTools(
+    userId: string,
+    message: string,
+    contextFetcher: () => Promise<string>
+  ): Promise<string> {
+    const model = "claude-3-5-sonnet-20241022";
+
+    // Ferramentas disponíveis para o Admin
+    const tools: any[] = [
+      {
+        name: "get_server_logs",
+        description: "Get the last N lines of server logs to debug issues.",
+        input_schema: {
+          type: "object",
+          properties: {
+            lines: { type: "number", description: "Number of lines (default 50)" }
+          }
+        }
+      },
+      {
+        name: "check_system_status",
+        description: "Check status of critical systems (IPFS, Scheduler, Database).",
+        input_schema: { type: "object", properties: {} }
+      },
+      {
+        name: "restart_service",
+        description: "Restart a specific service or the whole dashboard.",
+        input_schema: {
+          type: "object",
+          properties: {
+            service: { type: "string", enum: ["dashboard", "ipfs", "automations"] }
+          },
+          required: ["service"]
+        }
+      }
+    ];
+
+    try {
+      const systemContext = await contextFetcher();
+
+      const response = await this.client.messages.create({
+        model: model,
+        max_tokens: 4096,
+        tools: tools,
+        messages: [
+          { role: "user", content: `CONTEXTO DO SISTEMA:\n${systemContext}\n\nUSUÁRIO: ${message}` }
+        ]
+      });
+
+      const content = response.content[0];
+
+      if (content.type === "text") {
+        return content.text;
+      }
+
+      // TypeScript (e a API v2) diz que tool_use pode estar em qualquer bloco
+      const toolUse = response.content.find(c => c.type === "tool_use") as any;
+
+      if (toolUse) {
+        return `[EXECUTING COMMAND] 🛠️ ${toolUse.name} (${JSON.stringify(toolUse.input)}) \nAguardando implementação da execução real no backend... (Para Phase 2 completa)`;
+      }
+
+      return "Comando recebido, mas nenhuma ação tomada.";
+
+    } catch (error) {
+      console.error("Admin Chat Error:", error);
+      return `❌ Erro no Admin Console: ${error.message}`;
+    }
+  }
 }
 
 // Singleton instance
@@ -654,3 +727,5 @@ export function getClaudeService(): ClaudeService {
   }
   return claudeInstance;
 }
+
+export const getOptimizedClaudeService = getClaudeService;

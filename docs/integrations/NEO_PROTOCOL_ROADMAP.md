@@ -278,7 +278,7 @@ Integrate CEO automation platform.
 - ~IQAI Agent~ (Discontinued JAN 2026)
   └─ FlowCloser assume com GPT-4o/Gemini
 - ~Thirdweb~ (Evaluated → Removed)
-  └─ Substituído por Smart Factory NEØ
+  └─ Substituído por  NEØ Smart Factory
 
 ────────────────────────────────────────
 

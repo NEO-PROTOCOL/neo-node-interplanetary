@@ -86,7 +86,10 @@ TELEGRAM_BOT_TOKEN=your_bot_token_here
 TELEGRAM_ADMIN_CHAT=your_chat_id_here
 
 # Claude AI Configuration
-ANTHROPIC_API_KEY=your_claude_api_key_here
+ANTHROPIC_API_KEY=your_anthropic_key_here
+
+# Neo Core Configuration
+NEO_CORE_PRIVATE_KEY=your_neo_core_private_key_here
 
 # Dashboard Configuration
 DASHBOARD_PORT=3000

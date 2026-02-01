@@ -50,7 +50,7 @@ TELEGRAM_BOT_TOKEN=seu_token_do_botfather
 TELEGRAM_ADMIN_CHAT=seu_chat_id
 
 # Claude AI
-ANTHROPIC_API_KEY=SUA_CHAVE_AQUI
+ANTHROPIC_API_KEY=PLACEHOLDER
 
 # Dashboard (opcional)
 DASHBOARD_PORT=3000
@@ -65,7 +65,7 @@ DASHBOARD_PORT=3000
 ### 3. Build do Projeto
 
 ```bash
-pnpm run build
+pnpm run build:xxxxx
 ```
 
 ### 4. Iniciar Dashboard
@@ -86,22 +86,26 @@ http://localhost:3000
 ### Features Principais
 
 ✅ **Ações Rápidas**
+
 - Criar lembretes
 - Enviar mensagens
 - Analisar bugs
 
 ✅ **Chat com Claude AI**
+
 - Interface de chat em tempo real
 - Histórico de conversas
 - Estatísticas de uso
 
 ✅ **Automações Avançadas**
+
 - Relatório diário (18h)
 - Briefing matinal (8h)
 - Resumo semanal (segunda 9h)
 - Health check (a cada 5 min)
 
 ✅ **Visualizações**
+
 - Status do sistema
 - Métricas de IA
 - Lembretes agendados
@@ -324,7 +328,7 @@ docker build -t neobot-dashboard .
 # Run
 docker run -p 3000:3000 \
   -e TELEGRAM_BOT_TOKEN=xxx \
-  -e ANTHROPIC_API_KEY=SUA_CHAVE_AQUI \
+  -e ANTHROPIC_API_KEY=PLACEHOLDER \
   neobot-dashboard
 ```
 
@@ -502,7 +506,7 @@ TELEGRAM_BOT_TOKEN=seu-token-aqui
 TELEGRAM_CHAT_ID=seu-chat-id
 
 # Anthropic (Claude AI) - Necessário para agendamento inteligente
-ANTHROPIC_API_KEY=SUA_CHAVE_AQUI
+ANTHROPIC_API_KEY=PLACEHOLDER
 ```
 
 **Onde conseguir:**

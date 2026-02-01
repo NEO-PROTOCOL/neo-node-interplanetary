@@ -466,6 +466,7 @@ kbd {
 }
 
 @supports not (color: color-mix(in oklab, black, white)) {
+
   body::before,
   body::after {
     opacity: 0.2;

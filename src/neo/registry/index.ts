@@ -1,496 +1,221 @@
-/**
- * NEO Skills Registry - IPFS-based decentralized skills repository
- *
- * Substitui: ClawdHub (https://clawdhub.com)
- * Protocolo: IPFS (Content-Addressed Storage)
- */
 
-import { create as createIPFSClient, type KuboRPCClient } from "kubo-rpc-client";
-import { CID } from "multiformats/cid";
-import * as fs from "node:fs/promises";
-import * as path from "node:path";
-import { Readable } from "node:stream";
-import { pinToPinata, pinMultipleToPinata, isPinataConfigured } from "./pinata.js";
-import { pinToLighthouse, pinMultipleToLighthouse, isLighthouseConfigured } from "./lighthouse.js";
+import { create as createIpfsClient } from 'kubo-rpc-client';
+import { readFile, writeFile, mkdir } from 'fs/promises';
+import path from 'path';
+import { glob } from 'glob';
+import fs from 'fs';
 
-/**
- * Schema de uma NEO Skill
- */
-export interface NeoSkill {
-  id: string; // Identificador único (ex: "ipfs-status")
-  name: string; // Nome legível (ex: "IPFS Status Checker")
-  version: string; // SemVer (ex: "1.0.0")
-  cid: string; // IPFS Content ID
-  author: string; // mio-identity (ex: "mio-skills")
-  category: string[]; // Tags (ex: ["storage", "blockchain"])
-
-  metadata: {
-    description: string; // Descrição da skill
-    dependencies: string[]; // Dependências npm
-    permissions: string[]; // Permissões necessárias
-    repository?: string; // URL do repo (opcional)
-    license?: string; // Licença (default: MIT)
-  };
-
-  files: {
-    main: string; // Entry point (ex: "index.ts")
-    readme: string; // SKILL.md
-    config?: string; // config.ts (opcional)
-  };
-
-  signature: string; // Assinatura Web3 do autor
-  createdAt: Date;
-  updatedAt: Date;
+// Types
+export interface SkillManifest {
+  name: string;
+  version: string;
+  description: string;
+  author: string;
+  entryPoint: string; // relative path to main file
+  permissions?: string[];
+  signature?: string; // Web3 signature
+  cid?: string; // IPFS CID after publish
 }
 
-/**
- * Index IPFS - contém lista de todas as skills
- */
+export interface NeoRegistryConfig {
+  ipfsApiUrl?: string; // e.g., 'http://127.0.0.1:5001'
+  localSkillsDir?: string; // e.g., './skills'
+}
+
+// Compatibility Aliases for SDK
+export type NeoSkill = SkillManifest & { id: string; cid: string };
 export interface NeoSkillsIndex {
-  version: string; // Versão do index
-  skills: Record<
-    string,
-    {
-      // Map: skillId → CID
-      latest: string; // CID da última versão
-      versions: Record<string, string>; // SemVer → CID
-    }
-  >;
-  updatedAt: Date;
+  updatedAt: string;
+  skills: Record<string, { latest: string; versions: Record<string, string> }>;
 }
 
-/**
- * NEO Skills Registry Client
- *
- * @example
- * ```typescript
- * const registry = new NeoSkillsRegistry()
- *
- * // Publicar skill
- * const cid = await registry.publish({
- *   id: 'ipfs-status',
- *   name: 'IPFS Status Checker',
- *   version: '1.0.0',
- *   // ...
- * })
- *
- * // Instalar skill
- * const skill = await registry.install('ipfs-status@1.0.0')
- *
- * // Buscar skills
- * const results = await registry.search('ipfs')
- * ```
- */
+
 export class NeoSkillsRegistry {
-  private ipfsEndpoint: string;
-  private ipfsClient: KuboRPCClient | null = null;
-  private indexCID: string | null = null;
-  private cachedIndex: NeoSkillsIndex | null = null;
+  private ipfs;
+  private config: NeoRegistryConfig;
 
-  constructor(options?: { ipfsEndpoint?: string; indexCID?: string }) {
-    this.ipfsEndpoint = options?.ipfsEndpoint || "http://127.0.0.1:5001";
-    // Carrega index CID do .env se disponível
-    this.indexCID = options?.indexCID || process.env.NEO_INDEX_CID || null;
+  constructor(config: NeoRegistryConfig = {}) {
+    this.config = config;
+    this.ipfs = createIpfsClient({ url: config.ipfsApiUrl || 'http://127.0.0.1:5001' });
   }
 
   /**
-   * Inicializa cliente IPFS
+   * Publish a skill directory to IPFS
    */
-  private async getClient(): Promise<KuboRPCClient> {
-    if (!this.ipfsClient) {
-      this.ipfsClient = createIPFSClient({ url: this.ipfsEndpoint });
-    }
-    return this.ipfsClient;
-  }
+  async publish(skillDir: string, signer?: any): Promise<{ cid: string; manifest: SkillManifest }> {
+    console.log(`\n📦 Publishing skill from: ${skillDir}...`);
 
-  /**
-   * Publica uma skill no IPFS
-   */
-  async publish(
-    skill: Omit<NeoSkill, "cid" | "signature" | "createdAt" | "updatedAt">,
-    skillPath: string,
-  ): Promise<string> {
-    const client = await this.getClient();
-
-    // Valida que o diretório existe
-    try {
-      await fs.access(skillPath);
-    } catch {
-      throw new Error(`Skill directory not found: ${skillPath}`);
+    // 1. Validate Manifest
+    const manifestPath = path.join(skillDir, 'skill.json');
+    if (!fs.existsSync(manifestPath)) {
+      throw new Error(`Missing skill.json in ${skillDir}`);
     }
 
-    // Adiciona o diretório completo no IPFS
-    const results: Array<{ path: string; cid: CID }> = [];
+    const manifestContent = await readFile(manifestPath, 'utf-8');
+    const manifest: SkillManifest = JSON.parse(manifestContent);
 
-    for await (const result of client.addAll(this.readDirectory(skillPath), {
-      wrapWithDirectory: true,
-      pin: true,
-    })) {
-      results.push({ path: result.path, cid: result.cid });
+    // 2. Add files to IPFS
+    // We use glob to find all files recursively
+    const files = await glob('**/*', { cwd: skillDir, nodir: true, ignore: ['node_modules/**', '.git/**'] });
+
+    const ipfsInput = [];
+    for (const file of files) {
+      const content = await readFile(path.join(skillDir, file));
+      ipfsInput.push({
+        path: file, // Relative path preserves structure
+        content: content
+      });
     }
 
-    // O último resultado é o diretório root
-    const rootResult = results[results.length - 1];
-    if (!rootResult) {
-      throw new Error("Failed to add skill to IPFS");
-    }
+    console.log(`   Detailed: Uploading ${files.length} files to IPFS node...`);
 
-    const skillCID = rootResult.cid.toString();
-
-    // Cria objeto NeoSkill completo
-    const fullSkill: NeoSkill = {
-      ...skill,
-      cid: skillCID,
-      signature: "", // TODO: Implementar assinatura Web3 em Phase 1.3
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-
-    // Publica metadata como JSON
-    const metadataJSON = JSON.stringify(fullSkill, null, 2);
-    const metadataResult = await client.add(metadataJSON, { pin: true });
-
-    // Atualiza o index
-    await this.updateIndex(skill.id, skill.version, skillCID);
-
-    console.log(`✅ Skill published: ${skill.id}@${skill.version}`);
-    console.log(`   CID: ${skillCID}`);
-    console.log(`   Metadata CID: ${metadataResult.cid.toString()}`);
-
-    // Pina remotamente (Lighthouse primeiro, depois Pinata como fallback)
-    const cidsToPin = [skillCID, metadataResult.cid.toString()];
-
-    if (isLighthouseConfigured()) {
-      await pinMultipleToLighthouse(cidsToPin);
-    } else if (isPinataConfigured()) {
-      await pinMultipleToPinata(cidsToPin);
-    } else {
-      console.warn(
-        "⚠️  No remote pinning configured (Lighthouse/Pinata). Skill only pinned locally.",
-      );
-    }
-
-    return skillCID;
-  }
-
-  /**
-   * Helper: Lê diretório recursivamente para IPFS
-   */
-  private async *readDirectory(
-    dirPath: string,
-  ): AsyncGenerator<{ path: string; content: Readable }> {
-    const entries = await fs.readdir(dirPath, { withFileTypes: true });
-
-    for (const entry of entries) {
-      const fullPath = path.join(dirPath, entry.name);
-
-      if (entry.isDirectory()) {
-        yield* this.readDirectory(fullPath);
-      } else {
-        const content = Readable.from(await fs.readFile(fullPath));
-        yield {
-          path: path.relative(dirPath, fullPath),
-          content,
-        };
-      }
-    }
-  }
-
-  /**
-   * Instala uma skill do IPFS
-   */
-  async install(skillSpec: string, targetPath?: string): Promise<NeoSkill> {
-    const client = await this.getClient();
-
-    // Parse skillSpec: "ipfs-status@1.0.0" ou "ipfs-status" (latest)
-    const [skillId, version] = skillSpec.includes("@")
-      ? skillSpec.split("@")
-      : [skillSpec, undefined];
-
-    // Busca CID da skill no index
-    const skillCID = await this.getSkillCID(skillId, version);
-    if (!skillCID) {
-      throw new Error(`Skill not found: ${skillSpec}`);
-    }
-
-    // Define path de instalação
-    const installPath = targetPath || path.join(process.cwd(), "skills", skillId);
-
-    // Garante que o diretório pai existe
-    await fs.mkdir(path.dirname(installPath), { recursive: true });
-
-    // Baixa arquivos do IPFS
-    console.log(`📥 Downloading ${skillId} from IPFS...`);
-
-    // Usa cat para baixar todo o conteúdo
-    const chunks: Uint8Array[] = [];
-
-    for await (const chunk of client.cat(CID.parse(skillCID))) {
-      chunks.push(chunk);
-    }
-
-    const _content = Buffer.concat(chunks);
-
-    // Cria diretório e salva conteúdo
-    await fs.mkdir(installPath, { recursive: true });
-
-    // TODO: Implementar descompactação de tar/zip se necessário
-    // Por enquanto, assume que é um arquivo único ou precisa ser implementado
-    console.warn("⚠️  Install implementation is basic. Full directory download coming in Phase 2.");
-
-    // Lê metadata
-    const metadataPath = path.join(installPath, "skill.json");
-    const metadataContent = await fs.readFile(metadataPath, "utf-8");
-    const skill: NeoSkill = JSON.parse(metadataContent);
-
-    console.log(`✅ Skill installed: ${skill.id}@${skill.version}`);
-    console.log(`   Path: ${installPath}`);
-
-    return skill;
-  }
-
-  /**
-   * Busca skills no registry
-   */
-  async search(query: string): Promise<NeoSkill[]> {
-    const allSkills = await this.list();
-
-    const lowerQuery = query.toLowerCase();
-
-    return allSkills.filter(
-      (skill) =>
-        skill.id.toLowerCase().includes(lowerQuery) ||
-        skill.name.toLowerCase().includes(lowerQuery) ||
-        skill.metadata.description.toLowerCase().includes(lowerQuery) ||
-        skill.category.some((cat) => cat.toLowerCase().includes(lowerQuery)),
-    );
-  }
-
-  /**
-   * Lista todas as skills
-   */
-  async list(): Promise<NeoSkill[]> {
-    const index = await this.loadIndex();
-
-    const skills: NeoSkill[] = [];
-
-    for (const [_skillId, skillVersions] of Object.entries(index.skills)) {
-      const latestCID = skillVersions.latest;
-      const skill = await this.loadSkillMetadata(latestCID);
-
-      if (skill) {
-        skills.push(skill);
+    // 3. Upload Directory
+    // 'wrapWithDirectory: true' creates a folder with the hash
+    let rootCid = '';
+    for await (const result of this.ipfs.addAll(ipfsInput, { wrapWithDirectory: true })) {
+      // The last result with empty path is the root directory
+      if (result.path === '') {
+        rootCid = result.cid.toString();
       }
     }
 
-    return skills;
+    if (!rootCid) throw new Error("Failed to get root CID from IPFS addAll");
+
+    console.log(`✅ Published! CID: ${rootCid}`);
+    console.log(`   Skill: ${manifest.name} v${manifest.version}`);
+
+    // Update manifest with CID (optional, but good for tracking)
+    manifest.cid = rootCid;
+
+    return { cid: rootCid, manifest };
   }
 
   /**
-   * Obtém informações de uma skill específica
+   * Install/Download a skill from IPFS by CID
    */
-  async get(skillId: string, version?: string): Promise<NeoSkill | null> {
-    const skillCID = await this.getSkillCID(skillId, version);
-    if (!skillCID) return null;
+  async install(cid: string, alias?: string): Promise<string> {
+    const targetDir = this.config.localSkillsDir || './skills';
+    console.log(`\n📥 Installing skill ${cid}...`);
 
-    return this.loadSkillMetadata(skillCID);
-  }
+    // Create temp or final directory
+    // If alias is provided, use it as folder name. Otherwise use CID.
+    const folderName = alias || cid;
+    const installPath = path.join(targetDir, folderName);
 
-  /**
-   * Verifica a assinatura de uma skill
-   */
-  async verify(_skill: NeoSkill): Promise<boolean> {
-    // TODO: Implementar verificação Web3 em Phase 1.3
-    console.warn("Signature verification not implemented yet");
-    return true;
-  }
+    await mkdir(installPath, { recursive: true });
 
-  /**
-   * Obtém o CID do index atual
-   */
-  async getIndexCID(): Promise<string> {
-    if (this.indexCID) return this.indexCID;
+    // IPFS Get 
+    // This is a simplified version. For real robust implementation we need to handle recursive structures.
+    // For now we assume a flat-ish structure or use 'get' command.
 
-    // TODO: Buscar do DNS ou config em Phase 1.3
-    throw new Error("Index CID not configured. Use setIndexCID() to configure.");
-  }
+    // In kubo-rpc-client, .get returns an async generator of files
+    for await (const file of this.ipfs.get(cid)) {
+      // @ts-ignore
+      const f = file as any;
+      // f.path includes the CID prefix, we want to strip it relative to installPath
+      // e.g. QmHash/index.js -> index.js
+      const relativePath = f.path.replace(new RegExp(`^${cid}/?`), '');
 
-  /**
-   * Obtém o index completo (público)
-   */
-  async getIndex(): Promise<NeoSkillsIndex> {
-    return this.loadIndex();
-  }
+      if (!relativePath) continue; // Skip root folder itself if it matches
 
-  /**
-   * Define o CID do index
-   */
-  setIndexCID(cid: string): void {
-    this.indexCID = cid;
-    this.cachedIndex = null; // Invalida cache
-  }
+      const fullPath = path.join(installPath, relativePath);
 
-  /**
-   * Cria um novo index vazio
-   */
-  async createIndex(): Promise<string> {
-    const client = await this.getClient();
-
-    const newIndex: NeoSkillsIndex = {
-      version: "1.0.0",
-      skills: {},
-      updatedAt: new Date(),
-    };
-
-    const indexJSON = JSON.stringify(newIndex, null, 2);
-    const result = await client.add(indexJSON, { pin: true });
-
-    const indexCID = result.cid.toString();
-    this.setIndexCID(indexCID);
-
-    console.log(`✅ Index created: ${indexCID}`);
-
-    // Pina index remotamente (Lighthouse primeiro, depois Pinata como fallback)
-    if (isLighthouseConfigured()) {
-      await pinToLighthouse(indexCID, "neo-skills-index.json");
-    } else if (isPinataConfigured()) {
-      await pinToPinata(indexCID);
-    }
-
-    return indexCID;
-  }
-
-  /**
-   * Carrega o index do IPFS
-   */
-  private async loadIndex(): Promise<NeoSkillsIndex> {
-    if (this.cachedIndex) return this.cachedIndex;
-
-    const indexCID = await this.getIndexCID();
-    const client = await this.getClient();
-
-    const chunks: Uint8Array[] = [];
-
-    for await (const chunk of client.cat(CID.parse(indexCID))) {
-      chunks.push(chunk);
-    }
-
-    const indexJSON = Buffer.concat(chunks).toString("utf-8");
-    this.cachedIndex = JSON.parse(indexJSON);
-
-    return this.cachedIndex!;
-  }
-
-  /**
-   * Carrega metadata de uma skill do IPFS
-   */
-  private async loadSkillMetadata(skillCID: string): Promise<NeoSkill | null> {
-    try {
-      const client = await this.getClient();
-      const cid = CID.parse(skillCID);
-
-      // Tenta ler como arquivo primeiro (metadata JSON direto)
-      try {
-        const chunks: Uint8Array[] = [];
-        for await (const chunk of client.cat(cid)) {
+      if (f.type === 'dir') {
+        await mkdir(fullPath, { recursive: true });
+      } else if (f.type === 'file') {
+        // Collect content
+        const chunks = [];
+        // @ts-ignore - kubo-rpc-client types are tricky
+        for await (const chunk of f.content) {
           chunks.push(chunk);
         }
-        const metadataJSON = Buffer.concat(chunks).toString("utf-8");
-        return JSON.parse(metadataJSON);
-      } catch {
-        // Se falhar, tenta como diretório e busca skill.json
-        try {
-          const chunks: Uint8Array[] = [];
-          const skillJsonPath = `${skillCID}/skill.json`;
-          for await (const chunk of client.cat(skillJsonPath)) {
-            chunks.push(chunk);
-          }
-          const metadataJSON = Buffer.concat(chunks).toString("utf-8");
-          return JSON.parse(metadataJSON);
-        } catch {
-          // Se ainda falhar, retorna null
-          return null;
-        }
+        await writeFile(fullPath, Buffer.concat(chunks));
       }
-    } catch (error) {
-      console.error(`Failed to load skill metadata: ${skillCID}`, error);
-      return null;
     }
+
+    console.log(`✅ Installed to ${installPath}`);
+    return installPath;
   }
 
-  /**
-   * Busca CID de uma skill no index
-   */
-  private async getSkillCID(skillId: string, version?: string): Promise<string | null> {
-    const index = await this.loadIndex();
-
-    const skillVersions = index.skills[skillId];
-    if (!skillVersions) return null;
-
-    if (version) {
-      return skillVersions.versions[version] || null;
+  async listPinned(): Promise<string[]> {
+    const pins = [];
+    for await (const pin of this.ipfs.pin.ls()) {
+      pins.push(pin.cid.toString());
     }
-
-    return skillVersions.latest;
+    return pins;
   }
 
+  // --- Dashboard Support Methods ---
+
   /**
-   * Atualiza o index com uma nova skill
+   * Get the global index (Mock/Local for Phase 1)
    */
-  private async updateIndex(skillId: string, version: string, cid: string): Promise<void> {
-    const client = await this.getClient();
+  async getIndex(): Promise<NeoSkillsIndex> {
+    // In Phase 1, we don't have a global decentralized index contract yet.
+    // We will generate an index based on LOCALLY installed skills for the dashboard.
+    const localSkills = await this.list();
 
-    let index: NeoSkillsIndex;
+    const skillsMap: Record<string, any> = {};
 
-    try {
-      index = await this.loadIndex();
-    } catch {
-      // Se não existe index, cria um novo
-      await this.createIndex();
-      index = await this.loadIndex();
-    }
-
-    // Atualiza ou adiciona skill
-    if (!index.skills[skillId]) {
-      index.skills[skillId] = {
-        latest: cid,
-        versions: {},
+    for (const skill of localSkills) {
+      skillsMap[skill.name] = {
+        latest: skill.version,
+        versions: {
+          [skill.version]: skill.cid || 'local-dev'
+        }
       };
     }
 
-    index.skills[skillId].versions[version] = cid;
-    index.skills[skillId].latest = cid; // Sempre atualiza latest
-    index.updatedAt = new Date();
+    return {
+      updatedAt: new Date().toISOString(),
+      skills: skillsMap
+    };
+  }
 
-    // Publica novo index
-    const indexJSON = JSON.stringify(index, null, 2);
-    const result = await client.add(indexJSON, { pin: true });
+  async getIndexCID(): Promise<string | null> {
+    return "QmMockIndexHashPhase1"; // Placeholder
+  }
 
-    const newIndexCID = result.cid.toString();
-    this.setIndexCID(newIndexCID);
+  /**
+   * List installed skills by scanning local ./skills directory
+   */
+  async list(): Promise<(SkillManifest & { id: string, cid: string, category: string })[]> {
+    const skillsDir = this.config.localSkillsDir || './skills';
+    const results = [];
 
-    console.log(`✅ Index updated: ${newIndexCID}`);
+    try {
+      // Check if dir exists
+      if (!fs.existsSync(skillsDir)) return [];
 
-    // Pina index remotamente (Lighthouse primeiro, depois Pinata como fallback)
-    if (isLighthouseConfigured()) {
-      await pinToLighthouse(newIndexCID, "neo-skills-index.json");
-    } else if (isPinataConfigured()) {
-      await pinToPinata(newIndexCID);
+      const entries = await fs.promises.readdir(skillsDir, { withFileTypes: true });
+
+      for (const entry of entries) {
+        if (entry.isDirectory()) {
+          const manifestPath = path.join(skillsDir, entry.name, 'skill.json');
+          if (fs.existsSync(manifestPath)) {
+            try {
+              const content = await readFile(manifestPath, 'utf-8');
+              const manifest = JSON.parse(content);
+              results.push({
+                ...manifest,
+                id: entry.name, // Folder name acts as ID locally
+                cid: manifest.cid || 'local',
+                category: manifest.category || 'uncategorized'
+              });
+            } catch (e) {
+              console.warn(`Failed to parse ${manifestPath}`, e);
+            }
+          }
+        }
+      }
+    } catch (e) {
+      console.error("Error listing skills:", e);
     }
+
+    return results;
   }
 }
 
-/**
- * Factory function
- */
-export function createNeoSkillsRegistry(options?: {
-  ipfsEndpoint?: string;
-  indexCID?: string;
-}): NeoSkillsRegistry {
-  return new NeoSkillsRegistry(options);
-}
-
-/**
- * Exporta tipos
- */
-export type { CID };
+// Factory
+export const createNeoRegistry = (config?: NeoRegistryConfig) => new NeoSkillsRegistry(config);
+export const createNeoSkillsRegistry = createNeoRegistry; // Alias for SDK compatibility

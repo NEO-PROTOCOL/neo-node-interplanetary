@@ -34,6 +34,8 @@ get_secret() {
 export ANTHROPIC_API_KEY=$(get_secret "ANTHROPIC_API_KEY")
 export TELEGRAM_BOT_TOKEN=$(get_secret "TELEGRAM_BOT_TOKEN")
 export TELEGRAM_CHAT_ID=$(get_secret "TELEGRAM_CHAT_ID")
+export NOTION_API_KEY=$(get_secret "NOTION_API_KEY")
+export LINEAR_API_KEY=$(get_secret "LINEAR_API_KEY")
 
 # Load NEO Protocol keys
 export NEO_CORE_PRIVATE_KEY=$(get_secret "NEO_CORE_PRIVATE_KEY")
@@ -56,8 +58,8 @@ LOADED=0
 echo "✅ $LOADED secrets carregados!"
 echo ""
 echo "Verificação rápida:"
-echo "  ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:0:20}..."
-echo "  TELEGRAM_BOT_TOKEN: ${TELEGRAM_BOT_TOKEN:0:20}..."
-echo "  NEO_CORE_PRIVATE_KEY: ${NEO_CORE_PRIVATE_KEY:0:20}..."
+echo "  ANTHROPIC_API_KEY: [LOADED]"
+echo "  TELEGRAM_BOT_TOKEN: [LOADED]"
+echo "  NEO_CORE_PRIVATE_KEY: [LOADED]"
 echo ""
 echo "✅ Pronto para usar!"

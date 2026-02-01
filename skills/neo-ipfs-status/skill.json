@@ -1,21 +1,10 @@
 {
-  "id": "neo-ipfs-status",
-  "name": "NEO IPFS Status Checker",
+  "name": "neo-ipfs-status",
   "version": "1.0.0",
-  "author": "mio-skills",
-  "category": ["storage", "ipfs", "monitoring"],
-  
-  "metadata": {
-    "description": "Check IPFS node status including peer info, storage usage, and connectivity",
-    "dependencies": [],
-    "permissions": ["ipfs", "read"],
-    "repository": "https://github.com/neomello/neobot",
-    "license": "MIT"
-  },
-  
-  "files": {
-    "main": "index.ts",
-    "readme": "SKILL.md",
-    "config": "config.ts"
-  }
+  "description": "Checks the health and status of the local IPFS node",
+  "author": "NEØ MELLØ <neo@neoprotocol.space>",
+  "entryPoint": "index.js",
+  "permissions": [
+    "ipfs:read"
+  ]
 }
