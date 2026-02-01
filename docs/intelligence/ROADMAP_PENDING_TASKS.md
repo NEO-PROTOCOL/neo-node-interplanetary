@@ -22,7 +22,8 @@
 [----] Smart Factory ............ ⏳
 [----] Neo One (ASI1) ........... ⏳
 [----] NodeMello.run ............ ⏳
-[----] Evolution API ............ ⏳
+[----] Evolution API .......... ✗ DISC
+       (Discontinued - JAN 2026)
 [----] CEO Escalável ............ ⏳
 ```
 
@@ -215,32 +216,28 @@
 
 ## Phase 6: Evolution API
 
+**Status:** ✗ DISCONTINUED (JAN 2026)
+
 ```text
-▓▓▓ ANÁLISE NECESSÁRIA
+▓▓▓ DECISÃO: NÃO USAR
 ────────────────────────────────────────
-└─ [ ] Feature comparison
-       vs FlowCloser
-   └─ What overlaps?
-   └─ What's unique?
-   
-└─ [ ] Performance benchmark
-   └─ Speed comparison
-   └─ Resource usage
-   
-└─ [ ] Use case overlap
-   └─ Can we consolidate?
-   └─ Or keep both?
-   
-└─ [ ] Decision: Integrate or Deprecate
+[####] Análise completa ........... ✅
+[####] Decisão tomada ............. ✅
+[####] Status: DISCONTINUED ....... ✅
 ```
 
-**Action Items:**
-- [ ] Document Evolution API features
-- [ ] Compare with FlowCloser
-- [ ] Benchmark performance
-- [ ] Make integration decision
-- [ ] If integrate: follow Phase pattern
-- [ ] If deprecate: migration plan
+**Razão:**
+FlowCloser já implementa WhatsApp
+via Baileys de forma completa e
+independente. Evolution API seria
+redundante.
+
+**Análise completa em:**
+`docs/audits/AUDIT_EVOLUTION_VS_FLOWCLOSER.md`
+
+**Alternative chosen:**
+FlowCloser (Railway) com GPT-4o/Gemini
+own AI stack. Zero dependências externas.
 
 ────────────────────────────────────────
 
@@ -337,10 +334,10 @@
    └─ Effort: 3-5 dias
    └─ Impact: MEDIUM
    
-4. Evolution API (MAR 2026) ...... ⚡
-   └─ Need: Analysis first
-   └─ Effort: 1-2 dias (analysis)
-   └─ Impact: TBD
+4. Evolution API ................ ✗
+   └─ Status: DISCONTINUED (JAN 2026)
+   └─ Reason: Redundant with FlowCloser
+   └─ See: AUDIT_EVOLUTION_VS_FLOWCLOSER.md
    
 5. CEO Escalável (ABR 2026) ...... ⚡
    └─ Need: Architecture review
@@ -402,8 +399,7 @@
       - Documentation
       - ADR
       
-└─ Evolution API: 1-2 dias (analysis)
-   └─ Then: 3-5 dias (if integrate)
+└─ Evolution API: ✗ DISCONTINUED
    
 └─ CEO Escalável: 2-3 dias (review)
    └─ Then: 3-5 dias (if integrate)
@@ -414,8 +410,8 @@
 **Total estimado:** 
 - Q1 2026 (FlowPay + Smart Factory): 
   7-10 dias
-- Q2 2026 (Neo One + analyses): 
-  7-12 dias
+- Q2 2026 (Neo One + CEO analysis): 
+  5-8 dias
 - Q3 2026 (integrations): 6-9 dias
 
 ────────────────────────────────────────
@@ -447,14 +443,14 @@
 ```text
 ▓▓▓ COMPLETION RATE
 ────────────────────────────────────────
-Total Projects: 7
+Total Projects: 6 (Evolution API removed)
 Completed: 1 (FlowCloser)
 In Progress: 2 (FlowPay, Smart Factory)
-Pending: 4 (Neo One, Evolution, CEO,
-            NodeMello)
+Pending: 3 (Neo One, CEO, NodeMello)
+Discontinued: 1 (Evolution API)
 
-Progress: 14% (1/7 complete)
-Q1 2026: 43% (3/7 if we finish Q1)
+Progress: 16% (1/6 complete)
+Q1 2026: 50% (3/6 if we finish Q1)
 ```
 
 ────────────────────────────────────────

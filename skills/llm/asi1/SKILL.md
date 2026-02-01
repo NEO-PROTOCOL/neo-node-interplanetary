@@ -64,10 +64,12 @@ Chat: /chat/completions
 ```
 skills/llm/asi1/
 ├── SKILL.md            # Esta documentação
-├── client.ts           # ASI1 API client
-├── chat.ts             # Chat completion
-├── stream.ts           # Streaming responses
-└── config.ts           # ASI1 config
+├── chat.ts             # Chat completion ✅
+├── config.ts           # ASI1 config ✅
+└── stream.ts           # Streaming (future)
+
+Note: client.ts não necessário - chat.ts
+usa fetch direto (arquitetura simples)
 ```
 
 ### API Request Format
@@ -180,19 +182,26 @@ pnpm moltbot llm asi1 chat "Write a poem" --stream
 ## 📈 Roadmap
 
 ### v1.0 (Esta Semana)
-- [x] Documentação
-- [ ] Implementar client.ts
-- [ ] Implementar chat.ts
-- [ ] Testar API key
-- [ ] Comparar com Claude/Gemini
+
+- [x] Documentação ✅
+- [x] Implementar config.ts ✅
+- [x] Implementar chat.ts ✅
+- [ ] Testar API key (pending)
+- [ ] Comparar com Claude/Gemini (pending)
+
+**Note:** `client.ts` não implementado -
+chat.ts usa fetch direto (arquitetura
+mais simples, sem dependências extras)
 
 ### v1.1 (Próximas 2 Semanas)
+
 - [ ] Streaming support
 - [ ] LangChain integration
 - [ ] Usage tracking
 - [ ] Cost comparison dashboard
 
 ### v2.0 (Futuro)
+
 - [ ] Fine-tuned models
 - [ ] Function calling
 - [ ] Multi-modal (images)
@@ -203,6 +212,7 @@ pnpm moltbot llm asi1 chat "Write a poem" --stream
 ## 🐛 Troubleshooting
 
 ### API Key inválida
+
 ```bash
 # Testar key
 curl -X POST https://api.asi1.ai/v1/chat/completions \
@@ -212,10 +222,12 @@ curl -X POST https://api.asi1.ai/v1/chat/completions \
 ```
 
 ### Timeout
+
 - Aumentar timeout para 30s
 - ASI1 pode ser mais lento que Claude
 
 ### 404 Not Found
+
 - Verificar endpoint correto: `/v1/chat/completions`
 - Não usar `/v1/completions` (legacy)
 
@@ -230,5 +242,13 @@ curl -X POST https://api.asi1.ai/v1/chat/completions \
 
 ---
 
-**Última Atualização:** 30 Janeiro 2026  
-**Status:** ⏳ Aguardando implementação e testes
+**Última Atualização:** 01 Fevereiro 2026  
+**Status:** 🟡 Implementado - Aguardando testes
+
+**Implementado:**
+- ✅ config.ts (configurações e API key)
+- ✅ chat.ts (CLI completo com options)
+
+**Pendente:**
+- ⏳ Testar com API key real
+- ⏳ Comparação de performance vs Claude/Gemini
