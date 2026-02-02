@@ -67,5 +67,8 @@ data/flowpay/products/*.json
 .clawdbot/moltbot.json
 .clawdbot/*.json
 
-# Markdown lint config (opcional)
-# .markdownlintrc
+# Documentation (Sensitive/Historical)
+docs/guides/
+docs/history/
+docs/audits/
+docs/arc/
