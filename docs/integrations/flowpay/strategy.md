@@ -36,7 +36,7 @@ FlowPay Gateway              Neobot
 (Independent)                (Orchestrator)
 ─────────────────────────────────────────────
 📍 /CODIGOS/flowpay/         📍 /CODIGOS/neobot/
-🚀 Netlify deploy            📚 ADRs + Docs
+🚀 Railway deploy            📚 ADRs + Docs
 🔧 Cursor IDE                🔧 Cursor IDE
 💾 208 Astro files           🔗 Skills (client)
 🌐 HTTP API + Webhooks       🎯 Orchestration

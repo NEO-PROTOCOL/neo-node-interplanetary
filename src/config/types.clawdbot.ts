@@ -95,6 +95,7 @@ export type MoltbotConfig = {
   canvasHost?: CanvasHostConfig;
   talk?: TalkConfig;
   gateway?: GatewayConfig;
+  email?: import("./types.email.js").EmailConfig;
 };
 
 export type ConfigValidationIssue = {

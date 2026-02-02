@@ -179,6 +179,31 @@ export async function execute(ctx: any, input: UnlockInput): Promise<UnlockOutpu
       });
     }
 
+    // Step 12: Notify customer via Email if possible
+    if (receipt.customer_ref.includes('@')) {
+      try {
+        const { sendEmail } = await import('../../src/infra/outbound/email.js');
+        await sendEmail({
+          to: receipt.customer_ref,
+          subject: `✨ Acesso Liberado: ${product?.name || receipt.product_ref}`,
+          nodeId: 'flowpay',
+          skillId: 'flowpay:unlock',
+          html: `
+            <h1>Tudo pronto! Seu acesso foi liberado.</h1>
+            <p>Olá, sua compra do <strong>${product?.name || receipt.product_ref}</strong> foi confirmada.</p>
+            <p><strong>Seu ID de Recibo:</strong> ${receipt.receipt_id}</p>
+            <p><strong>Link de Acesso:</strong> <a href="${receipt.access_url}?token=${receipt.unlock_token}">${receipt.access_url}</a></p>
+            <br/>
+            <p>Guarde este e-mail para futuras consultas.</p>
+            <p>— Equipe NEØ Protocol</p>
+          `
+        });
+        console.log(`[flowpay:unlock] Notification email sent to ${receipt.customer_ref}`);
+      } catch (err: any) {
+        console.warn(`[flowpay:unlock] Failed to send notification email: ${err.message}`);
+      }
+    }
+
     console.log(`[flowpay:unlock] Access unlocked for ${receipt.customer_ref}`);
 
     return {

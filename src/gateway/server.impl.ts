@@ -258,7 +258,7 @@ export async function startGatewayServer(
     tailscaleMode,
   } = runtimeConfig;
   let hooksConfig = runtimeConfig.hooksConfig;
-  const canvasHostEnabled = runtimeConfig.canvasHostEnabled;
+  const canvasHostEnabled = false; // A2UI & CanvasHost disabled per lockdown request
 
   const wizardRunner = opts.wizardRunner ?? runOnboardingWizard;
   const { wizardSessions, findRunningWizard, purgeWizardSession } = createWizardSessionTracker();

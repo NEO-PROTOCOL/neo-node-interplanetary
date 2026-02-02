@@ -288,10 +288,12 @@ export function createGatewayHttpServer(opts: {
         )
           return;
       }
+      /* A2UI & CanvasHost disabled per lockdown request
       if (canvasHost) {
         if (await handleA2uiHttpRequest(req, res)) return;
         if (await canvasHost.handleHttpRequest(req, res)) return;
       }
+      */
       if (controlUiEnabled) {
         if (
           handleControlUiAvatarRequest(req, res, {
@@ -329,7 +331,9 @@ export function attachGatewayUpgradeHandler(opts: {
 }) {
   const { httpServer, wss, canvasHost } = opts;
   httpServer.on("upgrade", (req, socket, head) => {
-    if (canvasHost?.handleUpgrade(req, socket, head)) return;
+    /* A2UI & CanvasHost disabled per lockdown request
+      if (canvasHost?.handleUpgrade(req, socket, head)) return;
+    */
     wss.handleUpgrade(req, socket, head, (ws) => {
       wss.emit("connection", ws, req);
     });
