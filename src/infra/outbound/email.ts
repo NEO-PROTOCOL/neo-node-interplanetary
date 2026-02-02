@@ -89,10 +89,11 @@ async function sendViaResend(
 
 async function sendViaGmail(
   opts: EmailOptions,
-  config: any,
+  _config: any,
 ): Promise<{ success: boolean; messageId?: string; error?: string }> {
   // Placeholder for Gmail sending via 'gog' or direct API
   // For now, we log it. In production, we'd spawn 'gog gmail send'
-  console.log(`[Email] Gmail fallback: ${opts.subject} to ${opts.to}`);
+  const to = Array.isArray(opts.to) ? opts.to.join(",") : opts.to;
+  console.log(`[Email] Gmail fallback: ${opts.subject} to ${to}`);
   return { success: false, error: "Gmail sending not yet implemented (use Resend for MVP)" };
 }

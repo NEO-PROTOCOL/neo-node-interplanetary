@@ -7,7 +7,6 @@ import {
 import { createServer as createHttpsServer } from "node:https";
 import type { TlsOptions } from "node:tls";
 import type { WebSocketServer } from "ws";
-import { handleA2uiHttpRequest } from "../canvas-host/a2ui.js";
 import type { CanvasHostHandler } from "../canvas-host/server.js";
 import { loadConfig } from "../config/config.js";
 import type { createSubsystemLogger } from "../logging/subsystem.js";
@@ -213,7 +212,7 @@ export function createGatewayHttpServer(opts: {
   tlsOptions?: TlsOptions;
 }): HttpServer {
   const {
-    canvasHost,
+    canvasHost: _canvasHost,
     controlUiEnabled,
     controlUiBasePath,
     openAiChatCompletionsEnabled,
@@ -329,7 +328,7 @@ export function attachGatewayUpgradeHandler(opts: {
   wss: WebSocketServer;
   canvasHost: CanvasHostHandler | null;
 }) {
-  const { httpServer, wss, canvasHost } = opts;
+  const { httpServer, wss, canvasHost: _canvasHost } = opts;
   httpServer.on("upgrade", (req, socket, head) => {
     /* A2UI & CanvasHost disabled per lockdown request
       if (canvasHost?.handleUpgrade(req, socket, head)) return;

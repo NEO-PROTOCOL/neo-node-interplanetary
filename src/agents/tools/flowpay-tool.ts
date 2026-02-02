@@ -9,31 +9,14 @@ import type { MoltbotConfig } from "../../config/config.js";
 import type { AnyAgentTool } from "./common.js";
 import { jsonResult, readStringParam, readNumberParam } from "./common.js";
 
-interface FlowPayChargeResponse {
-  success: boolean;
-  pix_data?: {
-    qr_code: string;
-    br_code: string;
-    correlation_id: string;
-    value: number;
-    expires_at: string;
-    status: string;
-  };
-  wallet?: string;
-  moeda?: string;
-  id_transacao?: string;
-  error?: string;
-  type?: string;
-}
-
 const FlowPayToolSchema = Type.Object({
-  action: Type.Union([
-    Type.Literal("create_charge"),
-    Type.Literal("check_status"),
-    Type.Literal("unlock_access")
-  ], {
-    description: "Financial Action: create_charge (collect money), check_status (audit), unlock_access (grant token)",
-  }),
+  action: Type.Union(
+    [Type.Literal("create_charge"), Type.Literal("check_status"), Type.Literal("unlock_access")],
+    {
+      description:
+        "Financial Action: create_charge (collect money), check_status (audit), unlock_access (grant token)",
+    },
+  ),
   amount: Type.Optional(
     Type.Number({
       description: "Amount in BRL (required for create_charge)",
@@ -87,7 +70,10 @@ export function createFlowPayTool(_options?: { config?: MoltbotConfig }): AnyAge
         case "check_status":
           return await handleCheckStatus(params, flowpayUrl);
         case "unlock_access":
-          return jsonResult({ success: false, error: "Manual unlock requires Admin Signature (Implementation Pending)" });
+          return jsonResult({
+            success: false,
+            error: "Manual unlock requires Admin Signature (Implementation Pending)",
+          });
         default:
           throw new Error(`Unsupported FlowPay action: ${action}`);
       }
@@ -103,7 +89,8 @@ async function handleCreateCharge(
   const productId = readStringParam(params, "product_id") || "flowoff-service";
   const customerId = readStringParam(params, "customer_id") || "whatsapp-customer";
   // Default to zero address acts as "burn" or "treasury" if not specified
-  const walletAddress = readStringParam(params, "wallet_address") || "0x0000000000000000000000000000000000000000";
+  const walletAddress =
+    readStringParam(params, "wallet_address") || "0x0000000000000000000000000000000000000000";
 
   if (!amount || amount < 0.01) {
     return jsonResult({ success: false, error: "Amount must be > R$ 0.01" });
@@ -120,18 +107,24 @@ async function handleCreateCharge(
       body: JSON.stringify({
         wallet: walletAddress,
         value: amount, // API expects 'value' or 'valor' depending on version, verifying... sticking to 'valor' for backward compat or 'value' if new. Using 'valor' as per legacy tool, but architecture says 'amount_brl'. Let's use payload compatible with Woovi/OpenPix wrapper.
-        // Woovi Wrapper usually takes: correlationID, value (int cents), or value (float). 
+        // Woovi Wrapper usually takes: correlationID, value (int cents), or value (float).
         // Let's send a standard payload.
         amount: amount,
         correlationID: correlationId,
         productID: productId,
-        customerRef: customerId
+        customerRef: customerId,
       }),
     });
 
     // Fallback to legacy behavior if 404 (in case FlowPay isn't fully migrated yet)
     if (response.status === 404) {
-      return await handleLegacyCreateCharge(params, flowpayUrl, amount, walletAddress, correlationId);
+      return await handleLegacyCreateCharge(
+        params,
+        flowpayUrl,
+        amount,
+        walletAddress,
+        correlationId,
+      );
     }
 
     const data: any = await response.json();
@@ -140,7 +133,7 @@ async function handleCreateCharge(
       return jsonResult({
         success: false,
         error: data.error || "Failed to create Charge",
-        details: data
+        details: data,
       });
     }
 
@@ -155,20 +148,25 @@ async function handleCreateCharge(
         `Valor: R$ ${amount.toFixed(2)}`,
         `Ref: ${productId}`,
         `PIX Copia e Cola gerado.`,
-        `Aguardando confirmacao para Unlock.`
+        `Aguardando confirmacao para Unlock.`,
       ].join("\n"),
     });
-
   } catch (error: any) {
     return jsonResult({
       success: false,
-      error: `FlowPay Link Error: ${error.message}`
+      error: `FlowPay Link Error: ${error.message}`,
     });
   }
 }
 
 // Temporary Fallback while migrating endpoints
-async function handleLegacyCreateCharge(params: any, url: string, amount: number, wallet: string, txId: string) {
+async function handleLegacyCreateCharge(
+  params: any,
+  url: string,
+  amount: number,
+  wallet: string,
+  txId: string,
+) {
   const response = await fetch(`${url}/api/create-charge`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -177,7 +175,7 @@ async function handleLegacyCreateCharge(params: any, url: string, amount: number
       valor: amount,
       moeda: "BRL",
       id_transacao: txId,
-      product_id: params.product_id || "general"
+      product_id: params.product_id || "general",
     }),
   });
   const data: any = await response.json();
@@ -186,7 +184,7 @@ async function handleLegacyCreateCharge(params: any, url: string, amount: number
     mode: "legacy",
     pix_code: data.pix_data?.br_code,
     qr_code_url: data.pix_data?.qr_code,
-    message: "Generated via Legacy Endpoint"
+    message: "Generated via Legacy Endpoint",
   });
 }
 
@@ -198,11 +196,15 @@ async function handleCheckStatus(
 
   try {
     // Try new endpoint first
-    let response = await fetch(`${flowpayUrl}/api/charges/status?charge_id=${encodeURIComponent(chargeId)}`);
+    let response = await fetch(
+      `${flowpayUrl}/api/charges/status?charge_id=${encodeURIComponent(chargeId)}`,
+    );
 
     if (response.status === 404) {
       // Fallback
-      response = await fetch(`${flowpayUrl}/api/charge-status?charge_id=${encodeURIComponent(chargeId)}`);
+      response = await fetch(
+        `${flowpayUrl}/api/charge-status?charge_id=${encodeURIComponent(chargeId)}`,
+      );
     }
 
     if (!response.ok) {
@@ -217,7 +219,7 @@ async function handleCheckStatus(
       charge_id: chargeId,
       status: status,
       paid: ["completed", "paid", "ACTIVE"].includes(status),
-      message: status === "completed" ? "✅ PAGO & LIBERADO" : `Status: ${status}`
+      message: status === "completed" ? "✅ PAGO & LIBERADO" : `Status: ${status}`,
     });
   } catch (error: any) {
     return jsonResult({ success: false, error: error.message });
