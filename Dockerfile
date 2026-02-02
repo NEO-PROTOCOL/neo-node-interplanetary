@@ -4,8 +4,8 @@ FROM node:25-bookworm
 RUN curl -fsSL https://bun.sh/install | bash
 ENV PATH="/root/.bun/bin:${PATH}"
 
-# Install and enable corepack (explicitly install to avoid 'not found' error)
-RUN npm install -g corepack@latest && corepack enable pnpm
+# Install pnpm directly (more robust than corepack in some Docker environments)
+RUN npm install -g pnpm@latest
 
 WORKDIR /app
 
