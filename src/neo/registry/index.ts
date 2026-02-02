@@ -89,8 +89,19 @@ export class NeoSkillsRegistry {
     console.log(`✅ Published! CID: ${rootCid}`);
     console.log(`   Skill: ${manifest.name} v${manifest.version}`);
 
-    // Update manifest with CID (optional, but good for tracking)
+    // Update manifest with CID
     manifest.cid = rootCid;
+
+    // 4. Remote Pinning (Pinata Backup)
+    try {
+      const { pinToPinata, isPinataConfigured } = await import("./pinata.js");
+      if (isPinataConfigured()) {
+        console.log("📌 Pining to Pinata for persistence...");
+        await pinToPinata(rootCid);
+      }
+    } catch {
+      // Quiet fail for remote pin - local is primary
+    }
 
     return { cid: rootCid, manifest };
   }
