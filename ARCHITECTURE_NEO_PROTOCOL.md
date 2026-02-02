@@ -1,4 +1,5 @@
 <!-- markdownlint-disable MD003 MD007 MD022 MD023 MD025 MD029 MD032 MD033 MD034 -->
+```
 ========================================================================
               NEO PROTOCOL STACK - ARQUITETURA HIBRIDA
 ========================================================================
@@ -7,14 +8,16 @@
 [####] Arquiteto Mellø ............................................. OK
 [#---] Status Design Phase ........................................ WARN
 ========================================================================
-
+```
+```
 ========================================================================
                         VISAO ESTRATEGICA
 ========================================================================
-
+```
 O NEO Protocol e uma camada descentralizada e autonoma construida
-sobre o motor Moltbot, seguindo os principios Web3.
+sobre o motor openclaw, seguindo os principios Web3.
 
+```
 ┏━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┓
 ┃ NEO PROTOCOL STACK (100% Autonomous)                            ┃
 ┣━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┫
@@ -36,11 +39,13 @@ sobre o motor Moltbot, seguindo os principios Web3.
 ┃ ░ ░  • Session Management                                 ░ ░ ┃
 ┃ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ░ ┃
 ┗━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━┛
-
+```
+```
 ========================================================================
                        ESTRATEGIA HIBRIDA
 ========================================================================
-
+```
+```
 ┌────────────────────────────────────────────────────────────────┐
 │ ▓▓▓ MANTEMOS SINCRONIZADO (Moltbot Core)                       │
 ├────────────────────────────────────────────────────────────────┤
@@ -54,7 +59,7 @@ sobre o motor Moltbot, seguindo os principios Web3.
 │    └─ src/media/ - Media pipeline                               │
 │    └─ src/security/ - Security core                            │
 └────────────────────────────────────────────────────────────────┘
-
+```
 Estrategia de Sincronizacao:
 
   # Remote upstream
@@ -69,6 +74,7 @@ Estrategia de Sincronizacao:
 
 Vantagem: Recebemos bugfixes, novas channels, melhorias de performance
 
+```
 ┌────────────────────────────────────────────────────────────────┐
 │ ▓▓▓ DESACOPLAMOS (NEO Layer)                                   │
 ├────────────────────────────────────────────────────────────────┤
@@ -78,6 +84,7 @@ Vantagem: Recebemos bugfixes, novas channels, melhorias de performance
 │ └─ 4. NEO Gateway Extensions                                   │
 │ └─ 5. NEO Dashboard (Ja Existente)                              │
 └────────────────────────────────────────────────────────────────┘
+```
 
 ----------------------------------------------------------------------
 1. NEO Skills Registry (IPFS-First)
@@ -85,7 +92,7 @@ Vantagem: Recebemos bugfixes, novas channels, melhorias de performance
 Substitui: ClawdHub (<https://clawdhub.com>)
 
 Implementacao: neo/registry/index.ts
-
+```
   export interface NeoSkill {
     id: string; name: string; version: string; cid: CID;
     author: string; category: string[]; metadata: { ... }
@@ -96,7 +103,7 @@ Implementacao: neo/registry/index.ts
     async install(skillId: string): Promise<NeoSkill>
     async search(query: string): Promise<NeoSkill[]>
   }
-
+```
 Estrutura no IPFS:
 
 ┌────────────────────────────────────────────────────────────────┐
@@ -110,18 +117,18 @@ Estrutura no IPFS:
 └────────────────────────────────────────────────────────────────┘
 
 Comando CLI:
-
+```text
   pnpm neobot neo:skill:publish ./skills/ipfs/
   pnpm neobot neo:skill:install ipfs-status@1.0.0
   pnpm neobot neo:skill:list
-
+```
 ----------------------------------------------------------------------
 2. NEO Identity System (mio-system)
 ----------------------------------------------------------------------
 Substitui: Auth tradicional
 
 Implementacao: neo/identity/mio-system.ts
-
+```
   export interface NeoIdentity {
     id: string; publicKey: string; roles: string[];
     permissions: { channels, skills, tools };
@@ -132,7 +139,7 @@ Implementacao: neo/identity/mio-system.ts
     async createIdentity(metadata): Promise<NeoIdentity>
     async verifyIdentity(identity: NeoIdentity): Promise<boolean>
   }
-
+```
 Registro das 9 Identidades (neo/identity/registry.ts):
 
 ┌────────────────────────────────────────────────────────────────┐
