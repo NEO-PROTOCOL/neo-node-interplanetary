@@ -27,6 +27,15 @@ COPY . .
 RUN pnpm build
 
 ENV NODE_ENV=production
+# Force state dirs to a writable location inside the container
+ENV CLAWDBOT_STATE_DIR=/app/data
+ENV MOLTBOT_STATE_DIR=/app/data
+ENV TMPDIR=/app/tmp
+
+# Create writable directories and set permissions for 'node' user
+RUN mkdir -p /app/data /app/tmp && \
+  chown -R node:node /app/data /app/tmp && \
+  chmod 777 /app/tmp
 
 # Security hardening: Run as non-root user
 # The node:22-bookworm image includes a 'node' user (uid 1000)
