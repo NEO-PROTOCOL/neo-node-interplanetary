@@ -13,7 +13,7 @@ import {
   detectBrowserOpenSupport,
   formatControlUiSshHint,
   openUrl,
-  openUrlInBackground,
+
   probeGatewayReachable,
   waitForGatewayReachable,
   resolveControlUiLinks,
@@ -25,7 +25,7 @@ import { resolveGatewayService } from "../daemon/service.js";
 import { isSystemdUserServiceAvailable } from "../daemon/systemd.js";
 import { ensureControlUiAssetsBuilt } from "../infra/control-ui-assets.js";
 import type { RuntimeEnv } from "../runtime.js";
-import { runTui } from "../tui/tui.js";
+
 import { resolveUserPath } from "../utils.js";
 import {
   buildGatewayInstallPlan,
@@ -113,10 +113,10 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
       flow === "quickstart"
         ? (DEFAULT_GATEWAY_DAEMON_RUNTIME as GatewayDaemonRuntime)
         : ((await prompter.select({
-            message: "Gateway service runtime",
-            options: GATEWAY_DAEMON_RUNTIME_OPTIONS,
-            initialValue: opts.daemonRuntime ?? DEFAULT_GATEWAY_DAEMON_RUNTIME,
-          })) as GatewayDaemonRuntime);
+          message: "Gateway service runtime",
+          options: GATEWAY_DAEMON_RUNTIME_OPTIONS,
+          initialValue: opts.daemonRuntime ?? DEFAULT_GATEWAY_DAEMON_RUNTIME,
+        })) as GatewayDaemonRuntime);
     if (flow === "quickstart") {
       await prompter.note(
         "QuickStart uses Node for the Gateway service (stable + supported).",
@@ -315,34 +315,13 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
     hatchChoice = (await prompter.select({
       message: "How do you want to hatch your bot?",
       options: [
-        { value: "tui", label: "Hatch in TUI (recommended)" },
         { value: "web", label: "Open the Web UI" },
         { value: "later", label: "Do this later" },
       ],
-      initialValue: "tui",
-    })) as "tui" | "web" | "later";
+      initialValue: "web",
+    })) as "web" | "later";
 
-    if (hatchChoice === "tui") {
-      await runTui({
-        url: links.wsUrl,
-        token: settings.authMode === "token" ? settings.gatewayToken : undefined,
-        password: settings.authMode === "password" ? nextConfig.gateway?.auth?.password : "",
-        // Safety: onboarding TUI should not auto-deliver to lastProvider/lastTo.
-        deliver: false,
-        message: hasBootstrap ? "Wake up, my friend!" : undefined,
-      });
-      if (settings.authMode === "token" && settings.gatewayToken) {
-        seededInBackground = await openUrlInBackground(authedUrl);
-      }
-      if (seededInBackground) {
-        await prompter.note(
-          `Web UI seeded in the background. Open later with: ${formatCliCommand(
-            "moltbot dashboard --no-open",
-          )}`,
-          "Web UI",
-        );
-      }
-    } else if (hatchChoice === "web") {
+    if (hatchChoice === "web") {
       const browserSupport = await detectBrowserOpenSupport();
       if (browserSupport.ok) {
         controlUiOpened = await openUrl(authedUrl);
@@ -438,25 +417,25 @@ export async function finalizeOnboardingWizard(options: FinalizeOnboardingOption
   await prompter.note(
     hasWebSearchKey
       ? [
-          "Web search is enabled, so your agent can look things up online when needed.",
-          "",
-          webSearchKey
-            ? "API key: stored in config (tools.web.search.apiKey)."
-            : "API key: provided via BRAVE_API_KEY env var (Gateway environment).",
-          "Docs: https://docs.molt.bot/tools/web",
-        ].join("\n")
+        "Web search is enabled, so your agent can look things up online when needed.",
+        "",
+        webSearchKey
+          ? "API key: stored in config (tools.web.search.apiKey)."
+          : "API key: provided via BRAVE_API_KEY env var (Gateway environment).",
+        "Docs: https://docs.molt.bot/tools/web",
+      ].join("\n")
       : [
-          "If you want your agent to be able to search the web, you’ll need an API key.",
-          "",
-          "Moltbot uses Brave Search for the `web_search` tool. Without a Brave Search API key, web search won’t work.",
-          "",
-          "Set it up interactively:",
-          `- Run: ${formatCliCommand("moltbot configure --section web")}`,
-          "- Enable web_search and paste your Brave Search API key",
-          "",
-          "Alternative: set BRAVE_API_KEY in the Gateway environment (no config changes).",
-          "Docs: https://docs.molt.bot/tools/web",
-        ].join("\n"),
+        "If you want your agent to be able to search the web, you’ll need an API key.",
+        "",
+        "Moltbot uses Brave Search for the `web_search` tool. Without a Brave Search API key, web search won’t work.",
+        "",
+        "Set it up interactively:",
+        `- Run: ${formatCliCommand("moltbot configure --section web")}`,
+        "- Enable web_search and paste your Brave Search API key",
+        "",
+        "Alternative: set BRAVE_API_KEY in the Gateway environment (no config changes).",
+        "Docs: https://docs.molt.bot/tools/web",
+      ].join("\n"),
     "Web search (optional)",
   );
 

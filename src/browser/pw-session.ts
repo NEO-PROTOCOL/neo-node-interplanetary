@@ -333,7 +333,7 @@ async function pageTargetId(page: Page): Promise<string | null> {
     const targetId = String(info?.targetInfo?.targetId ?? "").trim();
     return targetId || null;
   } finally {
-    await session.detach().catch(() => {});
+    await session.detach().catch(() => { });
   }
 }
 
@@ -453,7 +453,7 @@ export async function closePlaywrightBrowserConnection(): Promise<void> {
   const cur = cached;
   cached = null;
   if (!cur) return;
-  await cur.browser.close().catch(() => {});
+  await cur.browser.close().catch(() => { });
 }
 
 /**
@@ -570,7 +570,7 @@ export async function focusPageByTargetIdViaPlaywright(opts: {
     } catch {
       throw err;
     } finally {
-      await session.detach().catch(() => {});
+      await session.detach().catch(() => { });
     }
   }
 }

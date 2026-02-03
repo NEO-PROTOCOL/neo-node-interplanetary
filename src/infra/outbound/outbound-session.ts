@@ -209,7 +209,7 @@ export async function ensureOutboundSessionEntry(params: {
   accountId?: string | null;
   route: OutboundSessionRoute;
 }) {
-  const { cfg, agentId, channel, accountId, route } = params;
+  const { agentId, channel, accountId, route } = params;
   await recordSessionMetaFromInbound({
     storePath: resolveStorePath(),
     sessionKey: route.sessionKey,

@@ -102,11 +102,11 @@ async function resolveChannelReports(params: {
   const accountIds = params.accountOverride
     ? [params.accountOverride]
     : (() => {
-        const ids = plugin.config.listAccountIds(cfg);
-        return ids.length > 0
-          ? ids
-          : [resolveChannelDefaultAccountId({ plugin, cfg, accountIds: ids })];
-      })();
+      const ids = plugin.config.listAccountIds(cfg);
+      return ids.length > 0
+        ? ids
+        : [resolveChannelDefaultAccountId({ plugin, cfg, accountIds: ids })];
+    })();
   const reports: ChannelCapabilitiesReport[] = [];
   const listedActions = plugin.actions?.listActions?.({ cfg }) ?? [];
   const actions = Array.from(
@@ -171,10 +171,10 @@ export async function channelsCapabilitiesCommand(
     !rawChannel || rawChannel === "all"
       ? plugins
       : (() => {
-          const plugin = getChannelPlugin(rawChannel);
-          if (!plugin) return null;
-          return [plugin];
-        })();
+        const plugin = getChannelPlugin(rawChannel);
+        if (!plugin) return null;
+        return [plugin];
+      })();
 
   if (!selected || selected.length === 0) {
     runtime.error(danger(`Unknown channel "${rawChannel}".`));

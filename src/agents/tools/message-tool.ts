@@ -350,20 +350,20 @@ export function createMessageTool(options?: MessageToolOptions): AnyAgentTool {
 
       const toolContext =
         options?.currentChannelId ||
-        options?.currentChannelProvider ||
-        options?.currentThreadTs ||
-        options?.replyToMode ||
-        options?.hasRepliedRef
+          options?.currentChannelProvider ||
+          options?.currentThreadTs ||
+          options?.replyToMode ||
+          options?.hasRepliedRef
           ? {
-              currentChannelId: options?.currentChannelId,
-              currentChannelProvider: options?.currentChannelProvider,
-              currentThreadTs: options?.currentThreadTs,
-              replyToMode: options?.replyToMode,
-              hasRepliedRef: options?.hasRepliedRef,
-              // Direct tool invocations should not add cross-context decoration.
-              // The agent is composing a message, not forwarding from another chat.
-              skipCrossContextDecoration: true,
-            }
+            currentChannelId: options?.currentChannelId,
+            currentChannelProvider: options?.currentChannelProvider,
+            currentThreadTs: options?.currentThreadTs,
+            replyToMode: options?.replyToMode,
+            hasRepliedRef: options?.hasRepliedRef,
+            // Direct tool invocations should not add cross-context decoration.
+            // The agent is composing a message, not forwarding from another chat.
+            skipCrossContextDecoration: true,
+          }
           : undefined;
 
       const result = await runMessageAction({
