@@ -22,16 +22,17 @@
         "url": "https://github.com/NEO-PROTOCOL/neo-closer.git"
     },
     "dependencies": {
-        "express": "^5.2.1",
+        "@hapi/boom": "^10.0.1",
         "@whiskeysockets/baileys": "^6.7.9",
         "dotenv": "^17.2.3",
+        "express": "^5.2.1",
         "pino": "^9.6.0"
     },
     "devDependencies": {
-        "typescript": "^5.9.3",
-        "tsx": "^4.21.0",
+        "@types/express": "^5.0.0",
         "@types/node": "^25.2.0",
-        "@types/express": "^5.0.0"
+        "tsx": "^4.21.0",
+        "typescript": "^5.9.3"
     },
     "engines": {
         "node": ">=22.0.0"

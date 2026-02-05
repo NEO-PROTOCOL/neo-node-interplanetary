@@ -3,7 +3,7 @@ import { Boom } from '@hapi/boom';
 import pino from 'pino';
 
 const logger = pino({ level: 'silent' });
-let sock;
+let sock: any;
 
 export async function initWhatsApp() {
     const { state, saveCreds } = await useMultiFileAuthState(
@@ -18,7 +18,7 @@ export async function initWhatsApp() {
 
     sock.ev.on('creds.update', saveCreds);
 
-    sock.ev.on('connection.update', (update) => {
+    sock.ev.on('connection.update', (update: any) => {
         const { connection, lastDisconnect } = update;
 
         if (connection === 'close') {

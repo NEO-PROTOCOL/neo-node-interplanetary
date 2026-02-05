@@ -9,6 +9,11 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 const NEXUS_SECRET = process.env.NEXUS_SECRET;
 
+if (!NEXUS_SECRET) {
+    console.error('[FLOWCLOSER] NEXUS_SECRET is required');
+    process.exit(1);
+}
+
 app.use(express.json());
 
 // Health check
@@ -54,7 +59,7 @@ app.post('/api/webhook/nexus', async (req, res) => {
 });
 
 // Event handlers
-async function handleMintConfirmed(payload) {
+async function handleMintConfirmed(payload: any) {
     const { payerId, contractAddress, txHash, amount } = payload;
 
     const message = `✅ Token Entregue!
@@ -71,7 +76,7 @@ Obrigado por fazer parte do NEØ Protocol!`;
     console.log(`[MINT_CONFIRMED] Notification sent to ${payerId}`);
 }
 
-async function handlePaymentReceived(payload) {
+async function handlePaymentReceived(payload: any) {
     const { payerId, amount, transactionId } = payload;
 
     const message = `✅ Pagamento Confirmado!
